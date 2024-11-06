@@ -47,6 +47,7 @@ class CreateAccountScreen extends StatelessWidget {
         ],
       ),
       body: Container(
+        width: 2000,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),
@@ -63,17 +64,28 @@ class CreateAccountScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
-                decoration: InputDecoration(labelText: 'Name'),
+              Container(
+                width: 300,
+                child: TextField(
+                  decoration: InputDecoration(labelText: 'Name'),
+                ),
               ),
+
               SizedBox(height: 20),
-              TextField(
-                decoration: InputDecoration(labelText: 'Email'),
+              Container(
+                width: 300,
+                child: TextField(
+                  decoration: InputDecoration(labelText: 'Email'),
+                ),
               ),
+
               SizedBox(height: 20),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
+              Container(
+                width: 300,
+                child: TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(labelText: 'Password'),
+                ),
               ),
               SizedBox(height: 40),
               // Butonul Create Account

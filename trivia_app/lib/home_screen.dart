@@ -6,7 +6,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Welcome to Trivia',
+          '🏠 Welcome to Trivia',
           style: TextStyle(fontSize: 20), // Font normal, fără bold
         ),
         backgroundColor: const Color.fromARGB(255, 146, 118, 170),

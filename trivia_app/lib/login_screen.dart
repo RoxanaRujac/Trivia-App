@@ -45,6 +45,7 @@ class LoginScreen extends StatelessWidget {
         ],
       ),
       body: Container(
+        width: 2000,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),
@@ -58,14 +59,18 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              TextField(
-                decoration: InputDecoration(labelText: 'Email'),
+              Container(
+                width: 300, // Set your desired width
+                child: const TextField(
+                  decoration: InputDecoration(labelText: 'Email'),
+                ),
               ),
               SizedBox(height: 20),
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(labelText: 'Password'),
-                cursorWidth: 2.0,
+              Container(
+                width: 300, // Set your desired width
+                child: const TextField(
+                  decoration: InputDecoration(labelText: 'Password'),
+                ),
               ),
               SizedBox(height: 40),
               ElevatedButton(
