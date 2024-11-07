@@ -6,8 +6,6 @@ class CreateAccountScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Create Account'),
-        backgroundColor: const Color.fromARGB(255, 146, 118, 170),
-        elevation: 5, // Umbra AppBar-ului
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -31,23 +29,32 @@ class CreateAccountScreen extends StatelessWidget {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'home',
                     child: Text('Go to Home'),
                   ),
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'log_in',
                     child: Text('Go to Log In'),
                   ),
                 ];
               },
-              icon: Icon(Icons.menu), // Icon-ul meniului
+              icon: const Icon(Icons.menu), // Icon-ul meniului
             ),
           )
         ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFD5CDF8), Color.fromARGB(255, 146, 118, 170)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Container(
-        width: 2000,
+        width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),

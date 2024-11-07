@@ -13,17 +13,18 @@ class HomeScreen extends StatelessWidget {
         elevation: 5, // Umbra AppBar-ului
         actions: <Widget>[
           IconButton(
-            icon: Icon(Icons.notifications),
+            icon: Icon(Icons.help),
             onPressed: () {
-              Navigator.pushNamed(context,
-                  '/notifications'); // Navighează la pagina notificărilor
+              Navigator.pushNamed(
+                  context, '/help'); // Navighează la pagina de ajutor
             },
           ),
           const Padding(
             padding: EdgeInsets.only(right: 8.0),
             child: CircleAvatar(
-              backgroundImage: AssetImage(
-                  'assets/images/user_profile.jpg'), // Asigură-te că imaginea există
+              child: Icon(Icons.account_circle,
+                  size: 30, color: Colors.white), // Iconiță cont
+              backgroundColor: Color(0xFF6A77B0), // Culoare fundal avatar
             ),
           ),
         ],
@@ -49,6 +50,22 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            const Text(
+              'The Ultimate Trivia Game\nTest your knowledge with fun quizzes!',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 21,
+                fontWeight: FontWeight.w700, // Font mai îngroșat
+                color: Color.fromARGB(255, 113, 82, 113),
+                shadows: [
+                  Shadow(
+                    offset: Offset(0.5, 0.5), // Umbra subtilă pentru adâncime
+                    color: Colors.black26, // Umbra de culoare închisă
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 40),
             FractionallySizedBox(
               alignment: Alignment.center,
               widthFactor: 0.5,

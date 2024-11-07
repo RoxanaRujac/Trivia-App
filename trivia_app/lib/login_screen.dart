@@ -6,7 +6,6 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
-        backgroundColor: const Color.fromARGB(255, 146, 118, 170),
         elevation: 5, // Umbra AppBar-ului
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
@@ -43,9 +42,18 @@ class LoginScreen extends StatelessWidget {
             ),
           )
         ],
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFFD5CDF8), Color.fromARGB(255, 146, 118, 170)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
       body: Container(
-        width: 2000,
+        width: double.infinity, // Folosim lățimea completă
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),

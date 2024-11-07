@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'create_account_screen.dart';
+import 'help_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => HomeScreen(),
+        '/help': (context) => HelpPage(),
         '/login': (context) => LoginScreen(),
         '/create_account': (context) => CreateAccountScreen(),
       },
