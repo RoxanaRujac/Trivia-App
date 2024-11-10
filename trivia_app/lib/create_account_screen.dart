@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
-class CreateAccountScreen extends StatelessWidget {
+class CreateAccountScreen extends StatefulWidget {
+  @override
+  _CreateAccountScreenState createState() => _CreateAccountScreenState();
+}
+
+class _CreateAccountScreenState extends State<CreateAccountScreen> {
+  bool _isPasswordHidden = true; // Variabilă pentru a controla ascunderea parolei
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,16 +22,12 @@ class CreateAccountScreen extends StatelessWidget {
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 40),
-            // PopupMenuButton pentru meniu
-            child:
-                // PopupMenuButton pentru meniu
-                PopupMenuButton<String>(
+            child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'log_in') {
-                  Navigator.pushNamed(
-                      context, '/login'); // Rămâi pe LoginScreen
+                  Navigator.pushNamed(context, '/login');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -39,7 +42,7 @@ class CreateAccountScreen extends StatelessWidget {
                   ),
                 ];
               },
-              icon: const Icon(Icons.menu), // Icon-ul meniului
+              icon: const Icon(Icons.menu),
             ),
           )
         ],
@@ -60,8 +63,7 @@ class CreateAccountScreen extends StatelessWidget {
             image: AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(
-                  0.4), // Mărim opacitatea pentru fundal mai estompat
+              Colors.black.withOpacity(0.4),
               BlendMode.dstIn,
             ),
           ),
@@ -77,7 +79,6 @@ class CreateAccountScreen extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
               ),
-
               SizedBox(height: 20),
               Container(
                 width: 300,
@@ -85,23 +86,31 @@ class CreateAccountScreen extends StatelessWidget {
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-
               SizedBox(height: 20),
               Container(
                 width: 300,
                 child: TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: 'Password'),
+                  obscureText: _isPasswordHidden, // Ascunde textul dacă e `true`
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordHidden ? Icons.visibility_off : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordHidden = !_isPasswordHidden; // Alternează vizibilitatea
+                        });
+                      },
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 40),
-              // Butonul Create Account
-              FractionallySizedBox(
-                alignment: Alignment.center,
-                widthFactor: 0.15,
+              SizedBox(
+                width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Logica de creare cont aici
                     print("Account created");
                   },
                   child: Text('Create Account'),
@@ -110,13 +119,12 @@ class CreateAccountScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: Color(
-                        0xFFE5A7EA), // Culoare similară cu butonul de pe HomeScreen
-                    foregroundColor: Colors.white, // Culoare text
+                    backgroundColor: Color(0xFFE5A7EA),
+                    foregroundColor: Colors.white,
                     textStyle: TextStyle(
-                        fontSize: 19,
-                        fontWeight:
-                            FontWeight.bold), // Stil text similar cu HomeScreen
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
