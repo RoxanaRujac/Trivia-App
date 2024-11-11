@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -12,17 +14,17 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Login'),
+        title: const Text('Login'),
         elevation: 5,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 40),
+            padding: const EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
@@ -33,17 +35,17 @@ class _LoginScreenState extends State<LoginScreen> {
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'home',
                     child: Text('Go to Home'),
                   ),
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'create_account',
                     child: Text('Go to Create Account'),
                   ),
                 ];
               },
-              icon: Icon(Icons.menu),
+              icon: const Icon(Icons.menu),
             ),
           )
         ],
@@ -61,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/trivia_background.jpg'),
+            image: const AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.4),
@@ -74,14 +76,14 @@ class _LoginScreenState extends State<LoginScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 300,
                 child: const TextField(
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-              SizedBox(height: 20),
-              Container(
+              const SizedBox(height: 20),
+              SizedBox(
                 width: 300,
                 child: TextField(
                   obscureText: _isPasswordHidden, // Ascunde textul dacă e `true`
@@ -100,22 +102,22 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   print("User logged in");
                 },
-                child: Text('Login'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  backgroundColor: Color(0xFF6A77B0),
+                  backgroundColor: const Color(0xFF6A77B0),
                   foregroundColor: Colors.white,
                   textStyle:
-                  TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
                 ),
+                child: Text('Login'),
               ),
             ],
           ),
