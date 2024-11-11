@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class CreateAccountScreen extends StatefulWidget {
-  const CreateAccountScreen({super.key});
-
   @override
   _CreateAccountScreenState createState() => _CreateAccountScreenState();
 }
@@ -14,16 +12,16 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: Text('Create Account'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context); // Navighează înapoi la HomeScreen
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(right: 40),
+            padding: EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
@@ -62,7 +60,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: const AssetImage('assets/images/trivia_background.jpg'),
+            image: AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.4),
@@ -75,21 +73,21 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
+              Container(
                 width: 300,
-                child: const TextField(
+                child: TextField(
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
+              SizedBox(height: 20),
+              Container(
                 width: 300,
-                child: const TextField(
+                child: TextField(
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
+              SizedBox(height: 20),
+              Container(
                 width: 300,
                 child: TextField(
                   obscureText: _isPasswordHidden, // Ascunde textul dacă e `true`
@@ -108,26 +106,26 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                   ),
                 ),
               ),
-              const SizedBox(height: 40),
+              SizedBox(height: 40),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
                     print("Account created");
                   },
+                  child: Text('Create Account'),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: const Color(0xFFE5A7EA),
+                    backgroundColor: Color(0xFFE5A7EA),
                     foregroundColor: Colors.white,
-                    textStyle: const TextStyle(
+                    textStyle: TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  child: Text('Create Account'),
                 ),
               ),
             ],
