@@ -1,29 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class LoginScreen extends StatelessWidget {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  Future<void> login(BuildContext context) async {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/login'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'email': emailController.text,
+        'password': passwordController.text,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      print("User logged in successfully");
+      Navigator.pushReplacementNamed(context, '/home_page');
+    } else {
+      print("Login failed");
+      // Arată o eroare în UI
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Login'),
-        elevation: 5, // Umbra AppBar-ului
+        elevation: 5,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navighează înapoi la HomeScreen
+            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 40),
-            // PopupMenuButton pentru meniu
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(
-                      context, '/create_account'); // Rămâi pe LoginScreen
+                  Navigator.pushNamed(context, '/create_account');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -38,7 +60,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ];
               },
-              icon: Icon(Icons.menu), // Icon-ul meniului
+              icon: Icon(Icons.menu),
             ),
           )
         ],
@@ -53,13 +75,13 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       body: Container(
-        width: double.infinity, // Folosim lățimea completă
+        width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4),
-                BlendMode.dstIn), // Fundal mai estompat
+                BlendMode.dstIn),
           ),
         ),
         child: Padding(
@@ -68,23 +90,25 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                width: 300, // Set your desired width
-                child: const TextField(
+                width: 300,
+                child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
               SizedBox(height: 20),
               Container(
-                width: 300, // Set your desired width
-                child: const TextField(
+                width: 300,
+                child: TextField(
+                  controller: passwordController,
                   decoration: InputDecoration(labelText: 'Password'),
+                  obscureText: true,
                 ),
               ),
               SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
-                  // Logica de login aici
-                  print("User logged in");
+                  login(context);
                 },
                 child: Text('Login'),
                 style: ElevatedButton.styleFrom(
