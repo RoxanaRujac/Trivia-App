@@ -14,9 +14,9 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
   int? numberOfQuestions;
   int? timeLimit;
   String? category;
-  bool isReadyForChallenge = false; // Flag pentru a verifica dacă toate opțiunile au fost selectate
+  bool isReadyForChallenge = false; 
 
-  // Functia pentru alegerea numărului de întrebări
+  //choose the number of questions
   void chooseNumberOfQuestions(BuildContext context) {
     showDialog(
       context: context,
@@ -33,7 +33,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 10;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();  // all options
                   Navigator.pop(context);
                 },
               ),
@@ -44,7 +44,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 15;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();  // all options
                   Navigator.pop(context);
                 },
               ),
@@ -55,7 +55,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 20;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();  // all options
                   Navigator.pop(context);
                 },
               ),
@@ -66,7 +66,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     );
   }
 
-  // Functia pentru alegerea limitelor de timp
+  //choose time limit
   void chooseTimeLimit(BuildContext context) {
     showDialog(
       context: context,
@@ -83,7 +83,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     timeLimit = 5;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -94,7 +94,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     timeLimit = 10;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -105,7 +105,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     timeLimit = 15;
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -116,7 +116,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     );
   }
 
-  // Functia pentru alegerea categoriei
+  //choose category
   void chooseCategory(BuildContext context) {
     showDialog(
       context: context,
@@ -133,7 +133,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     category = 'random';
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -144,7 +144,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     category = 'history';
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();  
                   Navigator.pop(context);
                 },
               ),
@@ -155,7 +155,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     category = 'geography';
                   });
                   saveSettings();
-                  checkIfReady();  // Verificăm dacă toate opțiunile sunt selectate
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -166,7 +166,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     );
   }
 
-  // Verifică dacă toate opțiunile au fost selectate
+  //check if all options all selected
   void checkIfReady() {
     if (selectedUser != null && numberOfQuestions != null && timeLimit != null && category != null) {
       setState(() {
@@ -186,7 +186,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     loadSettings();
   }
 
-  // Încarcă setările din SharedPreferences
+  //load to preferences
   Future<void> loadSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
@@ -196,7 +196,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     });
   }
 
-  // Salvează setările în SharedPreferences
   Future<void> saveSettings() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setInt('numberOfQuestions', numberOfQuestions ?? 10);
@@ -204,7 +203,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     await prefs.setString('category', category ?? 'random');
   }
 
-  // Încarcă lista de utilizatori
+  //load users usernames
   Future<void> loadUsers() async {
     List<String> fetchedUsers = await userService.fetchUsers();
     setState(() {
@@ -262,14 +261,14 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     padding: EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 236, 229, 237),
-                      borderRadius: BorderRadius.circular(10), // Optional, pentru colțuri rotunjite
+                      borderRadius: BorderRadius.circular(10), // round borders
                     ),
                     child: ListTile(
                       title: Text(
                         user,
                         style: TextStyle(
                           fontSize: 18,
-                          color: Color.fromARGB(255, 146, 118, 170), // Culoare text setată pe violet
+                          color: Color.fromARGB(255, 146, 118, 170),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -280,7 +279,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                           setState(() {
                             selectedUser = value;
                           });
-                          checkIfReady(); // Verifică imediat dacă toate opțiunile sunt completate
+                          checkIfReady(); // if all options are selected
                         },
                       ),
                     ),
@@ -288,11 +287,10 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                 },
               ),
             ),
-            // Dacă toate opțiunile sunt alese, arată butonul de Start Challenge, altfel arată butoanele de selecție
+            //if all options all selected => start button, else => still the 3 buttons
             isReadyForChallenge
                 ? ElevatedButton(
                     onPressed: () {
-                      // Navighează la pagina pentru a începe provocarea
                       Navigator.pushNamed(context, '/start_challenge');
                     },
                     child: Text('Start Challenge'),
