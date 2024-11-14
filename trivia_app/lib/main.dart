@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trivia_app/challenge_friend.dart';
 import 'package:trivia_app/main_home_page.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => LoginScreen(),
         '/create_account': (context) => CreateAccountScreen(),
         '/home_page' : (context) => HomePage(),
+        '/challenge' : (context) => ChallengeFriendPage(),
       },
     );
   }

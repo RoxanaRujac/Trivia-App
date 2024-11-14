@@ -97,6 +97,18 @@ app.post('/login', (req, res) => {
 });
 
 
+// get users
+app.get('/user', (req, res) => {
+  const query = 'SELECT username FROM user';
+
+  db.query(query, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Error fetching users' });
+
+    res.json(results); // Returnează lista de utilizatori
+  });
+});
+
+
 app.listen(3000, () => {
   console.log(`Server running on port 3000`);
 });
