@@ -5,6 +5,7 @@ import 'dart:convert';
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
 
   Future<void> login(BuildContext context) async {
     final response = await http.post(
@@ -21,7 +22,7 @@ class LoginScreen extends StatelessWidget {
       Navigator.pushReplacementNamed(context, '/home_page');
     } else {
       print("Login failed");
-      // Arată o eroare în UI
+      //TODO error in UI
     }
   }
 
@@ -80,8 +81,10 @@ class LoginScreen extends StatelessWidget {
           image: DecorationImage(
             image: AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
-            colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.4),
-                BlendMode.dstIn),
+            colorFilter: ColorFilter.mode(
+              Colors.black.withOpacity(0.4),
+              BlendMode.dstIn,
+            ),
           ),
         ),
         child: Padding(
@@ -99,10 +102,27 @@ class LoginScreen extends StatelessWidget {
               SizedBox(height: 20),
               Container(
                 width: 300,
-                child: TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isPasswordVisible,
+                  builder: (context, isPasswordVisible, child) {
+                    return TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible.value = !isPasswordVisible;
+                          },
+                        ),
+                      ),
+                      obscureText: !isPasswordVisible,
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 40),
@@ -118,8 +138,10 @@ class LoginScreen extends StatelessWidget {
                   ),
                   backgroundColor: Color(0xFF6A77B0),
                   foregroundColor: Colors.white,
-                  textStyle:
-                      TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                  textStyle: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

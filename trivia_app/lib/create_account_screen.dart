@@ -6,37 +6,38 @@ class CreateAccountScreen extends StatelessWidget {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
 
   Future<void> createAccount(BuildContext context) async {
-  try {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'username': nameController.text,
-        'email': emailController.text,
-        'password': passwordController.text,
-      }),
-    );
+    try {
+      if (nameController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          passwordController.text.isEmpty) {
+        print("Please fill in all fields");
+        return;
+      }
 
-    if (nameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty) {
-      print("Please fill in all fields");
-      return;
-    }
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': nameController.text,
+          'email': emailController.text,
+          'password': passwordController.text,
+        }),
+      );
 
-    if (response.statusCode == 200) {
-      print("Account created successfully");
-      Navigator.pushNamed(context, '/login');
-    } else {
-      // Arată eroarea detaliată din răspunsul serverului
-      print("Account creation failed. Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      if (response.statusCode == 200) {
+        print("Account created successfully");
+        Navigator.pushNamed(context, '/login');
+      } else {
+        print("Account creation failed. Status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
     }
-  } catch (e) {
-    print("Error occurred: $e");
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -121,16 +122,33 @@ class CreateAccountScreen extends StatelessWidget {
               SizedBox(height: 20),
               Container(
                 width: 300,
-                child: TextField(
-                  controller: passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isPasswordVisible,
+                  builder: (context, isPasswordVisible, child) {
+                    return TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible.value = !isPasswordVisible;
+                          },
+                        ),
+                      ),
+                      obscureText: !isPasswordVisible,
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 40),
               FractionallySizedBox(
-                alignment: Alignment.center,
-                widthFactor: 0.15,
+              alignment: Alignment.center,
+              widthFactor: 0.5,
                 child: ElevatedButton(
                   onPressed: () {
                     createAccount(context);

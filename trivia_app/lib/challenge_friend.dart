@@ -227,7 +227,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
           IconButton(
             icon: Icon(Icons.account_circle),
             onPressed: () {
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushNamed(context, '/user_profile');
             },
           ),
         ],
