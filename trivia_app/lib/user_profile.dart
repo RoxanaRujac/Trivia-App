@@ -6,11 +6,11 @@ class UserProfileScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profile'),
-        elevation: 5, // Umbra AppBar-ului
+        elevation: 5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navighează înapoi la HomeScreen
+            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
@@ -19,9 +19,9 @@ class UserProfileScreen extends StatelessWidget {
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(context, '/create_account'); // Mergi la Create Account
+                  Navigator.pushNamed(context, '/create_account');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -36,7 +36,7 @@ class UserProfileScreen extends StatelessWidget {
                   ),
                 ];
               },
-              icon: const Icon(Icons.menu), // Icon-ul meniului
+              icon: const Icon(Icons.menu),
             ),
           )
         ],
@@ -50,7 +50,7 @@ class UserProfileScreen extends StatelessWidget {
           ),
         ),
       ),
-      body: SingleChildScrollView(  // Adaugă acest widget pentru a face ecranul scrollabil
+      body: SingleChildScrollView(
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -69,23 +69,23 @@ class UserProfileScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                // Avatar cu umbra și fundal
+                // Avatar
                 CircleAvatar(
-                  radius: 80,  // Dimensiune mai mare pentru avatar
-                  backgroundColor: const Color(0xFF6A77B0), // Culoare de fundal personalizată
+                  radius: 80,
+                  backgroundColor: const Color(0xFF6A77B0),
                   child: const Icon(
                     Icons.account_circle,
-                    size: 100, // Dimensiune iconiță mai mare
-                    color: Colors.white, // Culoare iconiță
+                    size: 100,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Numele utilizatorului
+                // User name
                 const Text(
                   'User Name',
                   style: TextStyle(
                     fontSize: 32,
-                    fontWeight: FontWeight.w700, // Font mai gros pentru un impact mai puternic
+                    fontWeight: FontWeight.w700,
                     color: Colors.white,
                     shadows: [
                       Shadow(
@@ -97,13 +97,13 @@ class UserProfileScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                // Email-ul utilizatorului
+                // User email
                 const Text(
                   'user@example.com',
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.white70,
-                    fontStyle: FontStyle.italic, // Font mai elegant pentru email
+                    fontStyle: FontStyle.italic,
                     shadows: [
                       Shadow(
                         offset: Offset(1, 1),
@@ -113,42 +113,37 @@ class UserProfileScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const SizedBox(height: 30),
-                // Butonul pentru schimbarea parolei
-                ElevatedButton(
-                  onPressed: () {
-                    // Logica pentru schimbarea parolei
-                  },
-                  child: const Text("Change Password"),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: const Color(0xFF6A77B0),
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+
+                const SizedBox(height: 10),
+                const Text(
+                  'Highest score: 2500',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xFF6A77B0),
+                      shadows: [
+                      Shadow(
+                      offset: Offset(1.0, 1.0),
+                  blurRadius: 4.0,
+                  color: Colors.black26,
                 ),
-                const SizedBox(height: 20),
-                // Butonul pentru deconectare
-                ElevatedButton(
-                  onPressed: () {
-                    // Logica pentru deconectare
-                  },
-                  child: const Text("Log Out"),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: const Color(0xFFE5A7EA),
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ],
                   ),
                 ),
                 const SizedBox(height: 40),
-                // Secțiunea de Achievements (badge-uri)
+                // Notifications Section
+                const Text(
+                  'NOTIFICATIONS',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF6A77B0),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildNotificationCard(context, 'RandomPlayer challenged you for a quiz!'),
+                _buildNotificationCard(context, 'Friend123 challenged you for a quiz!'),
+                const SizedBox(height: 40),
+                // Achievements Section
                 const Text(
                   'ACHIEVEMENTS',
                   style: TextStyle(
@@ -168,11 +163,6 @@ class UserProfileScreen extends StatelessWidget {
                   'You have answered 100 questions correctly!',
                   'assets/images/badge_1.png',
                 ),
-                _buildAchievementCard(
-                  'NEW HIGHSCORE',
-                  'You reached a high score in a quiz!',
-                  'assets/images/badge_1.png',
-                ),
               ],
             ),
           ),
@@ -181,10 +171,49 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
-  // Widget pentru un card cu realizări (badge-uri)
+  // Widget for a notification card
+  // Widget pentru un card de notificare
+  Widget _buildNotificationCard(BuildContext context, String notificationText) {
+    return InkWell(
+      onTap: () {
+        // Verificăm dacă textul conține "challenged you" pentru a declanșa acțiunea
+        if (notificationText.contains("challenged you")) {
+          // Navighează către ecranul de joc
+          Navigator.pushNamed(context, '/game_screen');  // Definim '/game_screen' în routings
+        }
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10.0),
+        padding: const EdgeInsets.all(16.0),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF6A77B0), width: 2),
+        ),
+        child: Row(
+          children: [
+            const Icon(
+              Icons.notifications,
+              color: Color(0xFF6A77B0),
+              size: 30,
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Text(
+                notificationText,
+                style: const TextStyle(fontSize: 16, color: Colors.black),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Widget for an achievement card
   Widget _buildAchievementCard(String title, String description, String imagePath) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      margin: const EdgeInsets.symmetric(vertical: 5.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         color: Colors.white.withOpacity(0.3),
@@ -193,7 +222,7 @@ class UserProfileScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Image.asset(imagePath, width: 50, height: 50),  // Imaginea badge-ului
+          Image.asset(imagePath, width: 50, height: 50),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
