@@ -1,6 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CreateAccountScreen extends StatelessWidget {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+
+  Future<void> createAccount(BuildContext context) async {
+    try {
+      if (nameController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          passwordController.text.isEmpty) {
+        print("Please fill in all fields");
+        return;
+      }
+
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': nameController.text,
+          'email': emailController.text,
+          'password': passwordController.text,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        print("Account created successfully");
+        Navigator.pushNamed(context, '/login');
+      } else {
+        print("Account creation failed. Status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -9,22 +47,18 @@ class CreateAccountScreen extends StatelessWidget {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context); // Navighează înapoi la HomeScreen
+            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 40),
-            // PopupMenuButton pentru meniu
-            child:
-                // PopupMenuButton pentru meniu
-                PopupMenuButton<String>(
+            child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'log_in') {
-                  Navigator.pushNamed(
-                      context, '/login'); // Rămâi pe LoginScreen
+                  Navigator.pushNamed(context, '/login');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -39,7 +73,7 @@ class CreateAccountScreen extends StatelessWidget {
                   ),
                 ];
               },
-              icon: const Icon(Icons.menu), // Icon-ul meniului
+              icon: const Icon(Icons.menu),
             ),
           )
         ],
@@ -60,8 +94,7 @@ class CreateAccountScreen extends StatelessWidget {
             image: AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-              Colors.black.withOpacity(
-                  0.4), // Mărim opacitatea pentru fundal mai estompat
+              Colors.black.withOpacity(0.4),
               BlendMode.dstIn,
             ),
           ),
@@ -74,35 +107,51 @@ class CreateAccountScreen extends StatelessWidget {
               Container(
                 width: 300,
                 child: TextField(
+                  controller: nameController,
                   decoration: InputDecoration(labelText: 'Name'),
                 ),
               ),
-
               SizedBox(height: 20),
               Container(
                 width: 300,
                 child: TextField(
+                  controller: emailController,
                   decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-
               SizedBox(height: 20),
               Container(
                 width: 300,
-                child: TextField(
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: 'Password'),
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isPasswordVisible,
+                  builder: (context, isPasswordVisible, child) {
+                    return TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible.value = !isPasswordVisible;
+                          },
+                        ),
+                      ),
+                      obscureText: !isPasswordVisible,
+                    );
+                  },
                 ),
               ),
               SizedBox(height: 40),
-              // Butonul Create Account
               FractionallySizedBox(
-                alignment: Alignment.center,
-                widthFactor: 0.15,
+              alignment: Alignment.center,
+              widthFactor: 0.5,
                 child: ElevatedButton(
                   onPressed: () {
-                    // Logica de creare cont aici
-                    print("Account created");
+                    createAccount(context);
                   },
                   child: Text('Create Account'),
                   style: ElevatedButton.styleFrom(
@@ -110,13 +159,12 @@ class CreateAccountScreen extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: Color(
-                        0xFFE5A7EA), // Culoare similară cu butonul de pe HomeScreen
-                    foregroundColor: Colors.white, // Culoare text
+                    backgroundColor: Color(0xFFE5A7EA),
+                    foregroundColor: Colors.white,
                     textStyle: TextStyle(
-                        fontSize: 19,
-                        fontWeight:
-                            FontWeight.bold), // Stil text similar cu HomeScreen
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),

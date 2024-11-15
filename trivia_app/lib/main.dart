@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:trivia_app/challenge_friend.dart';
+import 'package:trivia_app/main_home_page.dart';
+import 'package:trivia_app/user_profile.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'create_account_screen.dart';
 import 'help_page.dart';
+
 
 void main() {
   runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -23,6 +29,9 @@ class MyApp extends StatelessWidget {
         '/help': (context) => HelpPage(),
         '/login': (context) => LoginScreen(),
         '/create_account': (context) => CreateAccountScreen(),
+        '/home_page' : (context) => HomePage(),
+        '/challenge' : (context) => ChallengeFriendPage(),
+        '/user_profile' : (context) => UserProfileScreen(),
       },
     );
   }

@@ -7,7 +7,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           '🏠 Welcome to Trivia',
-          style: TextStyle(fontSize: 20), // Font normal, fără bold
+          style: TextStyle(fontSize: 20), 
         ),
         backgroundColor: const Color.fromARGB(255, 146, 118, 170),
         elevation: 5, // Umbra AppBar-ului
