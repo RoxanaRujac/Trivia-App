@@ -109,6 +109,71 @@ app.get('/user', (req, res) => {
 });
 
 
+
+app.get('/questions', (req, res) => {
+  const { category_id } = req.query;
+
+  // Interogarea SQL pentru a obține întrebările și răspunsurile corecte
+  const query = `
+    SELECT 
+      q.question_id, 
+      q.text AS question_text, 
+      a.answer_id,
+      a.text AS answer_text, 
+      a.is_correct
+    FROM questions q
+    JOIN answers a ON q.question_id = a.question_id
+    WHERE q.category_id = ?
+    ORDER BY RAND();
+  `;
+
+  db.query(query, [category_id], (err, results) => {
+    if (err) {
+      console.error('Error fetching questions:', err);
+      return res.status(500).json({ message: 'Error fetching questions' });
+    }
+
+    console.log('Raw data fetched from DB:', results); // Log pentru debugging
+
+    // Grupăm datele pe baza question_id
+    const groupedQuestions = results.reduce((acc, row) => {
+      // Verificăm pentru valori null și le înlocuim cu un string gol
+      const questionText = row.question_text || ''; // Dacă null, se înlocuiește cu un string gol
+      const answerText = row.answer_text || ''; // Dacă null, se înlocuiește cu un string gol
+
+      // Căutăm întrebare deja existentă
+      const question = acc.find((q) => q.question_id === row.question_id);
+      if (question) {
+        // Adăugăm răspunsul la întrebarea existentă
+        question.answers.push({
+          answer_id: row.answer_id,
+          text: answerText,
+          is_correct: row.is_correct,
+        });
+      } else {
+        // Creăm o nouă întrebare
+        acc.push({
+          question_id: row.question_id,
+          text: questionText,
+          answers: [
+            {
+              answer_id: row.answer_id,
+              text: answerText,
+              is_correct: row.is_correct,
+            },
+          ],
+        });
+      }
+      return acc;
+    }, []);
+
+    // Returnăm răspunsul către client
+    res.json(groupedQuestions);
+  });
+});
+
+
+
 app.listen(3000, () => {
-  console.log(`Server running on port 3000`);
+  console.log("Server running on port 3000");
 });

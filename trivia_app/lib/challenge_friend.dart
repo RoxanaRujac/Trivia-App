@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trivia_app/game_screen.dart';
 import 'user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -14,7 +15,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
   int? numberOfQuestions;
   int? timeLimit;
   String? category;
-  bool isReadyForChallenge = false; 
+  bool isReadyForChallenge = false;
 
   //choose the number of questions
   void chooseNumberOfQuestions(BuildContext context) {
@@ -33,7 +34,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 10;
                   });
                   saveSettings();
-                  checkIfReady();  // all options
+                  checkIfReady(); // all options
                   Navigator.pop(context);
                 },
               ),
@@ -44,7 +45,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 15;
                   });
                   saveSettings();
-                  checkIfReady();  // all options
+                  checkIfReady(); // all options
                   Navigator.pop(context);
                 },
               ),
@@ -55,7 +56,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     numberOfQuestions = 20;
                   });
                   saveSettings();
-                  checkIfReady();  // all options
+                  checkIfReady(); // all options
                   Navigator.pop(context);
                 },
               ),
@@ -127,10 +128,10 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
-                title: Text('Random Questions'),
+                title: Text('Space'),
                 onTap: () {
                   setState(() {
-                    category = 'random';
+                    category = 'space';
                   });
                   saveSettings();
                   checkIfReady();
@@ -144,7 +145,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     category = 'history';
                   });
                   saveSettings();
-                  checkIfReady();  
+                  checkIfReady();
                   Navigator.pop(context);
                 },
               ),
@@ -168,7 +169,10 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
 
   //check if all options all selected
   void checkIfReady() {
-    if (selectedUser != null && numberOfQuestions != null && timeLimit != null && category != null) {
+    if (selectedUser != null &&
+        numberOfQuestions != null &&
+        timeLimit != null &&
+        category != null) {
       setState(() {
         isReadyForChallenge = true;
       });
@@ -272,7 +276,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      leading: Radio<String>( 
+                      leading: Radio<String>(
                         value: user,
                         groupValue: selectedUser,
                         onChanged: (String? value) {
@@ -291,13 +295,42 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
             isReadyForChallenge
                 ? ElevatedButton(
                     onPressed: () {
-                      Navigator.pushNamed(context, '/start_challenge');
+                      Map<String, int> categoryMap = {
+                        'space': 1,
+                        'history': 2,
+                        'geography': 3,
+                      };
+
+                      // category id
+                      int categoryId = categoryMap[category] ?? 1;
+
+                      //game page
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => GameScreen(
+                            categoryId: categoryId,
+                            numberOfQuestions: numberOfQuestions ?? 10,
+                            timeLimit: timeLimit ?? 5,
+                          ),
+                        ),
+                        );
+                        setState(() {
+                          selectedUser = null;
+                          numberOfQuestions = null;
+                          timeLimit = null;
+                          category = null;
+                          isReadyForChallenge = false;
+                        });
+                      
                     },
                     child: Text('Start Challenge'),
                     style: ElevatedButton.styleFrom(
-                      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                       backgroundColor: Color(0xFFE5A7EA),
-                      textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                      textStyle:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   )
                 : Column(
@@ -311,9 +344,11 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                               },
                         child: Text('Choose Category'),
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
                           backgroundColor: Color(0xFFE5A7EA),
-                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          textStyle: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -325,9 +360,11 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                               },
                         child: Text('Choose Number of Questions'),
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
                           backgroundColor: Color(0xFFE5A7EA),
-                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          textStyle: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                       SizedBox(height: 20),
@@ -339,9 +376,11 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                               },
                         child: Text('Choose Time Limit'),
                         style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 20, horizontal: 50),
                           backgroundColor: Color(0xFFE5A7EA),
-                          textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          textStyle: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ],
