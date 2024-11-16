@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'game_logic.dart'; // Importă clasa GameLogic
+import 'game_logic.dart';
 
 class GameScreen extends StatefulWidget {
   final int categoryId;
