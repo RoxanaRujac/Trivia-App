@@ -7,51 +7,54 @@ class CreateAccountScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
+  CreateAccountScreen({super.key});
+
   Future<void> createAccount(BuildContext context) async {
-  try {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'username': nameController.text,
-        'email': emailController.text,
-        'password': passwordController.text,
-      }),
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/register'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'username': nameController.text,
+          'email': emailController.text,
+          'password': passwordController.text,
+        }),
+      );
 
-    if (nameController.text.isEmpty || emailController.text.isEmpty || passwordController.text.isEmpty) {
-      print("Please fill in all fields");
-      return;
-    }
+      if (nameController.text.isEmpty ||
+          emailController.text.isEmpty ||
+          passwordController.text.isEmpty) {
+        print("Please fill in all fields");
+        return;
+      }
 
-    if (response.statusCode == 200) {
-      print("Account created successfully");
-      Navigator.pushNamed(context, '/login');
-    } else {
-      // Arată eroarea detaliată din răspunsul serverului
-      print("Account creation failed. Status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
+      if (response.statusCode == 200) {
+        print("Account created successfully");
+        Navigator.pushNamed(context, '/login');
+      } else {
+        // Arată eroarea detaliată din răspunsul serverului
+        print("Account creation failed. Status code: ${response.statusCode}");
+        print("Response body: ${response.body}");
+      }
+    } catch (e) {
+      print("Error occurred: $e");
     }
-  } catch (e) {
-    print("Error occurred: $e");
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Account'),
+        title: const Text('Create Account'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamed(context, '/categories');
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 40),
+            padding: const EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
@@ -90,7 +93,7 @@ class CreateAccountScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/trivia_background.jpg'),
+            image: const AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.4),
@@ -103,31 +106,31 @@ class CreateAccountScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 300,
                 child: TextField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
               ),
-              SizedBox(height: 20),
-              Container(
+              const SizedBox(height: 20),
+              SizedBox(
                 width: 300,
                 child: TextField(
                   controller: emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                 ),
               ),
-              SizedBox(height: 20),
-              Container(
+              const SizedBox(height: 20),
+              SizedBox(
                 width: 300,
                 child: TextField(
                   controller: passwordController,
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               FractionallySizedBox(
                 alignment: Alignment.center,
                 widthFactor: 0.15,
@@ -135,19 +138,20 @@ class CreateAccountScreen extends StatelessWidget {
                   onPressed: () {
                     createAccount(context);
                   },
-                  child: Text('Create Account'),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: Color(0xFFE5A7EA),
+                    backgroundColor: const Color(0xFFE5A7EA),
                     foregroundColor: Colors.white,
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  child: const Text('Create Account'),
                 ),
               ),
             ],

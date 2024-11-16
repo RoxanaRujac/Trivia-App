@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class HelpPage extends StatelessWidget {
+  const HelpPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,9 +21,11 @@ class HelpPage extends StatelessWidget {
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(context, '/create_account'); // Mergi la Create Account
+                  Navigator.pushNamed(context, '/create_account');
+                } else if (value == 'log_in') {
+                  Navigator.pushNamed(context, '/log_in');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -33,6 +37,10 @@ class HelpPage extends StatelessWidget {
                   const PopupMenuItem<String>(
                     value: 'create_account',
                     child: Text('Go to Create Account'),
+                  ),
+                  const PopupMenuItem<String>(
+                    value: 'log_in',
+                    child: Text('Go to Log In'),
                   ),
                 ];
               },
@@ -51,7 +59,7 @@ class HelpPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        width: double.infinity, 
+        width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: const AssetImage('assets/images/trivia_background.jpg'),
@@ -79,37 +87,37 @@ class HelpPage extends StatelessWidget {
                 'Log in or Create an Account',
                 'Before you can start playing, you need to either log in to your existing account or create a new one.',
                 Icons.login,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
               _buildStepCard(
                 'Start a Quiz',
                 'Once you’re logged in, you can choose a quiz from the available categories. Each quiz consists of multiple-choice questions.',
                 Icons.quiz,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
               _buildStepCard(
                 'Answer Questions',
                 'For each question, you’ll see four possible answers. Select the answer you think is correct. If you choose the correct one, you earn points!',
                 Icons.question_answer,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
               _buildStepCard(
                 'Time Limit',
                 'Be quick! Each question has a time limit, so you must answer before time runs out.',
                 Icons.timer,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
               _buildStepCard(
                 'Score & Badges',
                 'At the end of each quiz, you will receive a score based on how many questions you answered correctly. If you do well, you might unlock a badge or a new level!',
                 Icons.score,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
               _buildStepCard(
                 'Compete with Others',
                 'Your scores are recorded, and you can check your position in the leaderboard to see how you stack up against other players.',
                 Icons.leaderboard,
-                Color(0xFF6A77B0),
+                const Color(0xFF6A77B0),
               ),
             ],
           ),
@@ -118,7 +126,8 @@ class HelpPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStepCard(String title, String description, IconData icon, Color color) {
+  Widget _buildStepCard(
+      String title, String description, IconData icon, Color color) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(16.0),

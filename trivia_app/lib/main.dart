@@ -4,10 +4,10 @@ import 'home_screen.dart';
 import 'login_screen.dart';
 import 'create_account_screen.dart';
 import 'help_page.dart';
-
+import 'categories_screen.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -27,7 +27,8 @@ class MyApp extends StatelessWidget {
         '/help': (context) => HelpPage(),
         '/login': (context) => LoginScreen(),
         '/create_account': (context) => CreateAccountScreen(),
-        '/home_page' : (context) => HomePage(),
+        '/home_page': (context) => HomePage(),
+        '/categories': (context) => CategoriesScreen(),
       },
     );
   }
