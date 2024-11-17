@@ -1,41 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:trivia_app/create_account_service.dart';
 
 class CreateAccountScreen extends StatelessWidget {
+  CreateAccountScreen({super.key});
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+  final CreateAccountService _createAccountService = CreateAccountService();
 
   Future<void> createAccount(BuildContext context) async {
-    try {
-      if (nameController.text.isEmpty ||
-          emailController.text.isEmpty ||
-          passwordController.text.isEmpty) {
-        print("Please fill in all fields");
-        return;
-      }
+    bool success = await _createAccountService.createAccount(
+      nameController.text,
+      emailController.text,
+      passwordController.text,
+    );
 
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': nameController.text,
-          'email': emailController.text,
-          'password': passwordController.text,
-        }),
+    if (success) {
+      Navigator.pushNamed(context, '/login');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account creation failed. Please try again.'),
+        ),
       );
-
-      if (response.statusCode == 200) {
-        print("Account created successfully");
-        Navigator.pushNamed(context, '/login');
-      } else {
-        print("Account creation failed. Status code: ${response.statusCode}");
-        print("Response body: ${response.body}");
-      }
-    } catch (e) {
-      print("Error occurred: $e");
     }
   }
 
@@ -43,16 +31,16 @@ class CreateAccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Account'),
+        title: const Text('Create Account'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: EdgeInsets.only(right: 40),
+            padding: const EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
@@ -91,7 +79,7 @@ class CreateAccountScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/trivia_background.jpg'),
+            image: const AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.4),
@@ -104,22 +92,22 @@ class CreateAccountScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Container(
+              SizedBox(
                 width: 300,
                 child: TextField(
                   controller: nameController,
-                  decoration: InputDecoration(labelText: 'Name'),
+                  decoration: const InputDecoration(labelText: 'Name'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 300,
                 child: TextField(
                   controller: emailController,
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Container(
                 width: 300,
                 child: ValueListenableBuilder<bool>(
@@ -145,27 +133,28 @@ class CreateAccountScreen extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               FractionallySizedBox(
-              alignment: Alignment.center,
-              widthFactor: 0.5,
+                alignment: Alignment.center,
+                widthFactor: 0.5,
                 child: ElevatedButton(
                   onPressed: () {
                     createAccount(context);
                   },
-                  child: Text('Create Account'),
                   style: ElevatedButton.styleFrom(
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    backgroundColor: Color(0xFFE5A7EA),
+                    backgroundColor: const Color(0xFFE5A7EA),
                     foregroundColor: Colors.white,
-                    textStyle: TextStyle(
+                    textStyle: const TextStyle(
                       fontSize: 19,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
+                  child: const Text('Create Account'),
                 ),
               ),
             ],

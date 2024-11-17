@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:trivia_app/categories_screen.dart';
 import 'package:trivia_app/challenge_friend.dart';
 import 'package:trivia_app/main_home_page.dart';
 import 'package:trivia_app/user_profile.dart';
@@ -32,6 +33,7 @@ class MyApp extends StatelessWidget {
         '/home_page' : (context) => HomePage(),
         '/challenge' : (context) => ChallengeFriendPage(),
         '/user_profile' : (context) => UserProfileScreen(),
+        '/categories' : (context) => CategoriesScreen(),
       },
     );
   }

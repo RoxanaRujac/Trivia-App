@@ -128,6 +128,32 @@ app.get('/user', (req, res) => {
 
 
 
+//------------------------ Fetch username based on email ----------------------
+app.post('/getUsername', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  const query = 'SELECT username FROM user WHERE email = ?';
+  db.query(query, [email], (err, results) => {
+    if (err) {
+      console.error('Error fetching user profile:', err);
+      return res.status(500).json({ message: 'Error fetching user profile' });
+    }
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ username: results[0].username });
+  });
+});
+
+
+
+
 //---------- Get random questions in category + answers for each ------------
 
 app.get('/questions', (req, res) => {
