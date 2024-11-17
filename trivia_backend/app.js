@@ -9,6 +9,19 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
+
+/*
+express: Handles HTTP requests and responses.
+mysql: Allows interaction with a MySQL database.
+bcrypt: Used to securely hash and compare passwords.
+jsonwebtoken: Generates and verifies JWT tokens for user authentication.
+body-parser: Parses incoming JSON requests into req.body.
+cors: Enables cross-origin requests for the API.
+*/
+
+
+//------------------ Create a connection ---------------------------
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root', 
@@ -23,7 +36,8 @@ db.connect((err) => {
 
 
 
-// Register new user
+// ------------------------- Register a new user ----------------------
+
 app.post('/register', (req, res) => {
   const { username, email, password } = req.body;
 
@@ -62,27 +76,28 @@ app.post('/register', (req, res) => {
 
 
 
-// User login
+//------------------------------ User login -----------------------------------
+
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  console.log('Received login request:', req.body);  // Log pentru debugging
+  console.log('Received login request:', req.body);  // debugging log
 
   const query = 'SELECT * FROM user WHERE email = ?';
   db.query(query, [email], async (err, results) => {
     if (err || results.length === 0) {
-      console.log('Error or user not found:', err);  // Log pentru erori
+      console.log('Error or user not found:', err); 
       return res.status(401).json({ message: 'Authentication failed' });
     }
 
     const user = results[0];
-    console.log('User found:', user);  // Log pentru a verifica utilizatorul din DB
+    console.log('User found:', user);  
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log('Password valid:', isPasswordValid);  // Log pentru validarea parolei
+    console.log('Password valid:', isPasswordValid);  // password validation
 
     if (!isPasswordValid) {
-      console.log('Incorrect password');  // Log pentru parole incorecte
+      console.log('Incorrect password');
       return res.status(401).json({ message: 'Incorrect password' });
     }
 
@@ -90,14 +105,16 @@ app.post('/login', (req, res) => {
     const token = jwt.sign({ user_id: user.user_id }, 'your_secret_key', {
       expiresIn: '1h',
     });
-    console.log('Generated token:', token);  // Log pentru token generat
+    console.log('Generated token:', token);
 
     res.json({ message: 'Login successful', token });
   });
 });
 
 
-// get users
+
+//----------------------------- Get list of users --------------------------
+
 app.get('/user', (req, res) => {
   const query = 'SELECT username FROM user';
 
@@ -110,11 +127,13 @@ app.get('/user', (req, res) => {
 
 
 
+
+//---------- Get random questions in category + answers for each ------------
+
 app.get('/questions', (req, res) => {
   const { category_id } = req.query;
 
-  // Interogarea SQL pentru a obține întrebările și răspunsurile corecte
-  const query = `
+    const query = `
     SELECT 
       q.question_id, 
       q.text AS question_text, 
@@ -133,25 +152,26 @@ app.get('/questions', (req, res) => {
       return res.status(500).json({ message: 'Error fetching questions' });
     }
 
-    console.log('Raw data fetched from DB:', results); // Log pentru debugging
+    console.log('Raw data fetched from DB:', results); // debugg log
 
-    // Grupăm datele pe baza question_id
+    //group by question_id
     const groupedQuestions = results.reduce((acc, row) => {
-      // Verificăm pentru valori null și le înlocuim cu un string gol
-      const questionText = row.question_text || ''; // Dacă null, se înlocuiește cu un string gol
-      const answerText = row.answer_text || ''; // Dacă null, se înlocuiește cu un string gol
+      
+      const questionText = row.question_text || ''; //null -> replace with empty string
+      const answerText = row.answer_text || ''; //null -> replace with empty string
 
-      // Căutăm întrebare deja existentă
+
+      //look for already existing question
       const question = acc.find((q) => q.question_id === row.question_id);
       if (question) {
-        // Adăugăm răspunsul la întrebarea existentă
+        // add answer
         question.answers.push({
           answer_id: row.answer_id,
           text: answerText,
           is_correct: row.is_correct,
         });
       } else {
-        // Creăm o nouă întrebare
+        //new question
         acc.push({
           question_id: row.question_id,
           text: questionText,
@@ -167,7 +187,7 @@ app.get('/questions', (req, res) => {
       return acc;
     }, []);
 
-    // Returnăm răspunsul către client
+    //respond to client
     res.json(groupedQuestions);
   });
 });

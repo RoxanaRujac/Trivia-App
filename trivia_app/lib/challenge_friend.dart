@@ -314,15 +314,14 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                             timeLimit: timeLimit ?? 5,
                           ),
                         ),
-                        );
-                        setState(() {
-                          selectedUser = null;
-                          numberOfQuestions = null;
-                          timeLimit = null;
-                          category = null;
-                          isReadyForChallenge = false;
-                        });
-                      
+                      );
+                      setState(() {
+                        selectedUser = null;
+                        numberOfQuestions = null;
+                        timeLimit = null;
+                        category = null;
+                        isReadyForChallenge = false;
+                      });
                     },
                     child: Text('Start Challenge'),
                     style: ElevatedButton.styleFrom(

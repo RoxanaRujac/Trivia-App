@@ -12,15 +12,14 @@ class GameLogic {
 
   List<dynamic> usedQuestions = [];
 
-
   Future<void> fetchQuestions() async {
-    final url = Uri.parse(
-        'http://localhost:3000/questions?category_id=$categoryId');
+    final url =
+        Uri.parse('http://localhost:3000/questions?category_id=$categoryId');
     try {
       final response = await http.get(url);
 
       if (response.statusCode == 200) {
-        // Parsetăm răspunsul și îl salvăm în lista de întrebări
+        // if success -> parse the response and add it to the list
         questions = json.decode(response.body);
       } else {
         throw Exception('Failed to load questions');
