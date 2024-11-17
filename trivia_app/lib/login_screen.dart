@@ -1,28 +1,26 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:trivia_app/login_screen_service.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+  final LoginScreenService _loginScreenService = LoginScreenService();
 
   Future<void> login(BuildContext context) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email': emailController.text,
-        'password': passwordController.text,
-      }),
+    bool success = await _loginScreenService.login(
+      emailController.text,
+      passwordController.text,
     );
 
-    if (response.statusCode == 200) {
-      print("User logged in successfully");
+    if (success) {
       Navigator.pushReplacementNamed(context, '/home_page');
     } else {
-      print("Login failed");
-      //TODO error in UI
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account creation failed. Please try again.'),
+        ),
+      );
     }
   }
 
@@ -33,8 +31,9 @@ class LoginScreen extends StatelessWidget {
         title: Text('Login'),
         elevation: 5,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            Navigator.pop(context);
             Navigator.pop(context);
           },
         ),
@@ -45,17 +44,19 @@ class LoginScreen extends StatelessWidget {
               onSelected: (value) {
                 if (value == 'home') {
                   Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
+                  Navigator.pushNamed(context, '/create_account');
                   Navigator.pushNamed(context, '/create_account');
                 }
               },
               itemBuilder: (BuildContext context) {
                 return [
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'home',
                     child: Text('Go to Home'),
                   ),
-                  PopupMenuItem<String>(
+                  const PopupMenuItem<String>(
                     value: 'create_account',
                     child: Text('Go to Create Account'),
                   ),
@@ -79,7 +80,7 @@ class LoginScreen extends StatelessWidget {
         width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/trivia_background.jpg'),
+            image: const AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
               Colors.black.withOpacity(0.4),
@@ -125,24 +126,26 @@ class LoginScreen extends StatelessWidget {
                   },
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
                   login(context);
+                  login(context);
                 },
-                child: Text('Login'),
                 style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
-                  backgroundColor: Color(0xFF6A77B0),
+                  backgroundColor: const Color(0xFF6A77B0),
                   foregroundColor: Colors.white,
                   textStyle: TextStyle(
                     fontSize: 19,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                child: Text('Login'),
               ),
             ],
           ),
