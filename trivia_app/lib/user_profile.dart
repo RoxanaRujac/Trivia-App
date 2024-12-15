@@ -27,7 +27,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     'Travel Destinations': 0,
     'Psychology': 9,
     'Hobbies': 1,
-    'Space': 0,
+    'Space': 7,
   };
 
   // Lista de badge-uri unice pentru fiecare categorie

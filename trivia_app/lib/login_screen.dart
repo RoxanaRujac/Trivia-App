@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:trivia_app/login_screen_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
@@ -13,7 +14,19 @@ class LoginScreen extends StatelessWidget {
       passwordController.text,
     );
 
+
+     Future<void> saveEmailToSharedPreferences(String email) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_email', email); // Salvează email-ul
+      print('Email saved to SharedPreferences: $email');
+    } catch (e) {
+      print('Error saving email: $e');
+    }
+  }
+
     if (success) {
+      saveEmailToSharedPreferences(emailController.text);
       Navigator.pushReplacementNamed(context, '/home_page');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
