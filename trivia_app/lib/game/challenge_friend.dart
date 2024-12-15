@@ -207,13 +207,22 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     await prefs.setString('category', category ?? 'random');
   }
 
+  Future<String?> getCurrentUser() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString('currentUserEmail');
+}
+
   //load users usernames
   Future<void> loadUsers() async {
-    List<String> fetchedUsers = await userService.fetchUsers();
+  String? currentUserEmail = await getCurrentUser();
+  if (currentUserEmail != null) {
+    List<String> fetchedUsers = await userService.fetchUsers(currentUserEmail);
     setState(() {
       users = fetchedUsers;
     });
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

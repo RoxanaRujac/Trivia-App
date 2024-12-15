@@ -248,12 +248,6 @@ class _GamePageState extends State<GameScreen> {
                   }
                 });
 
-                // ScaffoldMessenger.of(context).showSnackBar(
-                //   SnackBar(
-                //     content: Text(isCorrect ? 'Correct!' : 'Wrong!'),
-                //     backgroundColor: isCorrect ? Colors.green : Colors.red,
-                //   ),
-                // );
               },
         child: Center(
         child: Text(

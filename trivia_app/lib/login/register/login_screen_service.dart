@@ -1,5 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreenService {
   Future<bool> login(String email, String password) async {
@@ -14,6 +15,9 @@ class LoginScreenService {
       );
 
       if (response.statusCode == 200) {
+        // Salvează email-ul utilizatorului logat în SharedPreferences
+        await saveCurrentUser(email);
+
         print("User logged in successfully");
         return true;
       } else {
@@ -25,5 +29,11 @@ class LoginScreenService {
       print("Error occurred: $e");
       return false;
     }
+  }
+
+  // Funcție pentru a salva utilizatorul curent
+  Future<void> saveCurrentUser(String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentUserEmail', email);
   }
 }
