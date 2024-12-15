@@ -1,7 +1,6 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 import 'game_logic.dart';
 
 class GameScreen extends StatefulWidget {
@@ -27,6 +26,7 @@ class _GamePageState extends State<GameScreen> {
   int remainingTime = 0; // In seconds
   String? selectedAnswer;
   bool isAnswered = false;
+  int correctAnswersCount = 0;
 
   @override
   void initState() {
@@ -229,6 +229,11 @@ class _GamePageState extends State<GameScreen> {
                 setState(() {
                   selectedAnswer = answer['text'];
                   isAnswered = true;
+
+                  if (isCorrect) {
+                    correctAnswersCount++;
+                  }
+
                 });
 
                 // Delay to show correct/incorrect feedback
@@ -285,7 +290,7 @@ class _GamePageState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Game Complete!'),
-        content: Text('Congratulations! You completed the game.'),
+        content: Text('Congratulations! You completed the game with $correctAnswersCount correct answers.'),
         actions: [
           TextButton(
             onPressed: () {

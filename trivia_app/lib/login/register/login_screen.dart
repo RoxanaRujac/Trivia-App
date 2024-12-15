@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:trivia_app/create_account_service.dart';
+import 'package:trivia_app/login/register/login_screen_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CreateAccountScreen extends StatelessWidget {
-  CreateAccountScreen({super.key});
-  final TextEditingController nameController = TextEditingController();
+class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
-  final CreateAccountService _createAccountService = CreateAccountService();
+  final LoginScreenService _loginScreenService = LoginScreenService();
 
-  Future<void> createAccount(BuildContext context) async {
-    bool success = await _createAccountService.createAccount(
-      nameController.text,
+  Future<void> login(BuildContext context) async {
+    bool success = await _loginScreenService.login(
       emailController.text,
       passwordController.text,
     );
 
+
+     Future<void> saveEmailToSharedPreferences(String email) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_email', email); // Salvează email-ul
+      print('Email saved to SharedPreferences: $email');
+    } catch (e) {
+      print('Error saving email: $e');
+    }
+  }
+
     if (success) {
-      Navigator.pushNamed(context, '/login');
+      saveEmailToSharedPreferences(emailController.text);
+      Navigator.pushReplacementNamed(context, '/home_page');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -31,22 +41,26 @@ class CreateAccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: Text('LogIn'),
+        elevation: 5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
+            Navigator.pop(context);
             Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(right: 40),
+            padding: EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
                   Navigator.pushNamed(context, '/');
-                } else if (value == 'log_in') {
-                  Navigator.pushNamed(context, '/login');
+                  Navigator.pushNamed(context, '/');
+                } else if (value == 'create_account') {
+                  Navigator.pushNamed(context, '/create_account');
+                  Navigator.pushNamed(context, '/create_account');
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -56,12 +70,12 @@ class CreateAccountScreen extends StatelessWidget {
                     child: Text('Go to Home'),
                   ),
                   const PopupMenuItem<String>(
-                    value: 'log_in',
-                    child: Text('Go to Log In'),
+                    value: 'create_account',
+                    child: Text('Go to Create Account'),
                   ),
                 ];
               },
-              icon: const Icon(Icons.menu),
+              icon: Icon(Icons.menu),
             ),
           )
         ],
@@ -92,22 +106,14 @@ class CreateAccountScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
-                width: 300,
-                child: TextField(
-                  controller: nameController,
-                  decoration: const InputDecoration(labelText: 'Name'),
-                ),
-              ),
-              const SizedBox(height: 20),
               Container(
                 width: 300,
                 child: TextField(
                   controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20),
               Container(
                 width: 300,
                 child: ValueListenableBuilder<bool>(
@@ -134,28 +140,25 @@ class CreateAccountScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 40),
-              FractionallySizedBox(
-                alignment: Alignment.center,
-                widthFactor: 0.5,
-                child: ElevatedButton(
-                  onPressed: () {
-                    createAccount(context);
-                  },
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 16, horizontal: 30),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
-                    ),
-                    backgroundColor: const Color(0xFFE5A7EA),
-                    foregroundColor: Colors.white,
-                    textStyle: const TextStyle(
-                      fontSize: 19,
-                      fontWeight: FontWeight.bold,
-                    ),
+              ElevatedButton(
+                onPressed: () {
+                  login(context);
+                  login(context);
+                },
+                style: ElevatedButton.styleFrom(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
-                  child: const Text('Create Account'),
+                  backgroundColor: const Color(0xFF6A77B0),
+                  foregroundColor: Colors.white,
+                  textStyle: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
+                child: Text('LogIn'),
               ),
             ],
           ),
