@@ -186,3 +186,16 @@ CREATE TABLE challenges (
   FOREIGN KEY (challenged_email) REFERENCES user(email)
 );
 
+
+
+
+
+
+
+
+
+
+
+
+
+

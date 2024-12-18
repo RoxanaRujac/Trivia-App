@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:trivia_app/challenge_friend.dart';
 import 'package:trivia_app/main_home_page.dart';
-import 'package:trivia_app/user_profile.dart';
+import 'package:trivia_app/userprofile_screen.dart';
 import 'home_screen.dart';
 import 'login_screen.dart';
 import 'create_account_screen.dart';
 import 'help_page.dart';
 import 'categories_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
+
 
 Future<void> requestPermissions() async {
   var status = await Permission.storage.request();

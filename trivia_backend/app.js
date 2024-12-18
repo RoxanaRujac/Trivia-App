@@ -194,6 +194,63 @@ app.get('/questions', (req, res) => {
   });
 });
 
+app.post('/getAchievements', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  // 1. Obținem realizările utilizatorului pe baza email-ului
+  const getAchievementsQuery = `
+    SELECT a.name, a.description
+    FROM achievements a
+    JOIN user_achievements ua ON a.achievement_id = ua.achievement_id
+    JOIN user u ON u.email = ua.email
+    WHERE u.email = ?
+  `;
+  
+  db.query(getAchievementsQuery, [email], (err, achievements) => {
+    if (err) {
+      console.error('Error fetching achievements:', err);
+      return res.status(500).json({ message: 'Error fetching achievements' });
+    }
+
+    if (achievements.length === 0) {
+      return res.status(404).json({ message: 'No achievements found for this user' });
+    }
+
+    // 2. Returnăm realizările utilizatorului
+    res.json(achievements);
+  });
+});
+
+app.post('/getChallenges', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  const getChallengesQuery = `
+    SELECT c.challenge_id, u1.name AS challenger_name, c.status, c.created_at
+    FROM challenges c
+    JOIN user u1 ON c.challenger_id = u1.user_id
+    JOIN user u2 ON c.challenged_id = u2.user_id
+    WHERE u2.email = ?
+  `;
+
+  db.query(getChallengesQuery, [email], (err, results) => {
+    if (err) {
+      console.error('Error fetching challenges:', err);
+      return res.status(500).json({ message: 'Error fetching challenges' });
+    }
+
+    res.json(results);
+  });
+});
+
+
 app.listen(3000, () => {
   console.log(`Server running on port 3000`);
 });
