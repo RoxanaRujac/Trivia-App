@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'userprofile_logic.dart';
-import 'login_screen.dart';
+import 'package:trivia_app/userprofile_logic.dart';
+import 'package:trivia_app/game_screen.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({super.key});
@@ -13,8 +15,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   final UserProfileLogic _logic = UserProfileLogic();
 
   String email = '';
-  String username = 'Loading...';
-  late List<String> notifications;
+  String username = '';
+  List<Map<String, dynamic>> notifications= [];
   List<Map<String, dynamic>> achievements = [];
   late Map<String, int> categoryProgress;
   late Map<String, String> badges;
@@ -25,7 +27,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   void initState() {
     super.initState();
     _initializeUserProfile();
-    notifications = _logic.getNotifications();
     categoryProgress = _logic.getCategoryProgress();
     badges = _logic.getBadges();
   }
@@ -42,6 +43,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         username = fetchedUsername;
       });
 
+      final fetchedNotifications = await _logic.fetchNotifications(username);
+      setState(() {
+        notifications = fetchedNotifications;
+      });
+
       final fetchedAchievements = await _logic.fetchAchievements(email);
       setState(() {
         achievements = fetchedAchievements;
@@ -54,120 +60,117 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
-   void _showBadgeCollection() {
-  Map<String, String> earnedBadges = {};
-  categoryProgress.forEach((category, progress) {
-    if (progress == 10) {
-      earnedBadges[category] = badges[category]!;
-    }
-  });
+  void _showBadgeCollection() {
+    Map<String, String> earnedBadges = {};
+    categoryProgress.forEach((category, progress) {
+      if (progress == 10) {
+        earnedBadges[category] = badges[category]!;
+      }
+    });
 
-  print('Earned badges: $earnedBadges'); // Adaugă un print pentru debugging
-
-  // Dacă nu sunt badge-uri câștigate, afișăm un mesaj
-  if (earnedBadges.isEmpty) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('No Earned Badges'),
-          content: const Text('You have not earned any badges yet.'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
-  } else {
-    // Afișăm badge-urile câștigate într-un grid
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('My Badge Collection'),
-          content: SizedBox(
-            height: 300, // Adjust based on number of badges
-            child: GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
+    // Dacă nu sunt badge-uri câștigate, afișăm un mesaj
+    if (earnedBadges.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('No Earned Badges'),
+            content: const Text('You have not earned any badges yet.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
               ),
-              itemCount: earnedBadges.length,
-              itemBuilder: (BuildContext context, int index) {
-                String category = earnedBadges.keys.elementAt(index);
-                return Column(
-                  children: [
-                    Image.asset(earnedBadges[category]!, width: 60, height: 60),
-                    Text(category, style: const TextStyle(fontSize: 12)),
-                  ],
-                );
-              },
+            ],
+          );
+        },
+      );
+    } else {
+      // Afișăm badge-urile câștigate într-un grid
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('My Badge Collection'),
+            content: SizedBox(
+              height: 300, // Adjust based on number of badges
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                ),
+                itemCount: earnedBadges.length,
+                itemBuilder: (BuildContext context, int index) {
+                  String category = earnedBadges.keys.elementAt(index);
+                  return Column(
+                    children: [
+                      Image.asset(earnedBadges[category]!, width: 60, height: 60),
+                      Text(category, style: const TextStyle(fontSize: 12)),
+                    ],
+                  );
+                },
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Close'),
-            ),
-          ],
-        );
-      },
-    );
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Close'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
-
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: const Text('User Profile'),
-      flexibleSpace: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [ Color(0xFF6A77B0), Color(0xFFE5A7EA),],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-      ),
-    ),
-    body: SingleChildScrollView(
-      child: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/images/trivia_background.jpg'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            _buildHeader(), // Menține secțiunea de header
-            const SizedBox(height: 40),
-            _buildNotificationsSection(),
-            const SizedBox(height: 40),
-            _buildAchievementsSection(),
-            const SizedBox(height: 40),
-            _buildCategoryProgressSection(),
-            const SizedBox(height: 40), // Distanță între secțiuni și buton
-            ElevatedButton(
-              onPressed: _showBadgeCollection,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-              child: const Text('View My Badge Collection', style: TextStyle(color: Color(0xFF6A77B0))),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('User Profile'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 40)
-          ],
+          ),
         ),
       ),
-    ),
-  );
-}
+      body: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/trivia_background.jpg'),
+              fit: BoxFit.cover,
+            ),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              _buildHeader(), // Menține secțiunea de header
+              const SizedBox(height: 40),
+              _buildNotificationsSection(),
+              const SizedBox(height: 40),
+              _buildAchievementsSection(),
+              const SizedBox(height: 40),
+              _buildCategoryProgressSection(),
+              const SizedBox(height: 40), // Distanță între secțiuni și buton
+              ElevatedButton(
+                onPressed: _showBadgeCollection,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+                child: const Text('View My Badge Collection', style: TextStyle(color: Color(0xFF6A77B0))),
+              ),
+              const SizedBox(height: 40)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildHeader() {
     return Column(
@@ -197,34 +200,117 @@ Widget build(BuildContext context) {
   }
 
   Widget _buildNotificationsSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'NOTIFICATIONS',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        ...notifications.map((notification) => _buildNotificationCard(notification)),
-      ],
-    );
-  }
-
-  Widget _buildNotificationCard(String notificationText) {
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      child: ListTile(
-        leading: const Icon(Icons.notifications, color: Color(0xFF6A77B0)),
-        title: Text(notificationText),
-        onTap: () {
-          if (notificationText.contains('challenged you')) {
-            Navigator.pushNamed(context, '/game_screen');
-          }
-        },
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'NOTIFICATIONS',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       ),
+      notifications.isEmpty
+          ? const Center(
+              child: Text(
+                'No notifications available.',
+                style: TextStyle(color: Colors.white70),
+              ),
+            )
+          : Column(
+              children: notifications.map((notification) => _buildNotificationCard(notification)).toList(),
+            ),
+    ],
+  );
+}
+
+Widget _buildNotificationCard(Map<String, dynamic> notification) {
+  return Card(
+    margin: const EdgeInsets.symmetric(vertical: 10),
+    child: ListTile(
+      leading: const Icon(Icons.notifications, color: Color(0xFF6A77B0)),
+      title: Text('${notification['sender']} challenged you to a game!'),
+      onTap: () {
+        _showChallengePopup(notification);
+      },
+    ),
+  );
+}
+
+   // Funcția pentru a naviga la ecranul de joc
+  void _startPlaying(Map<String, dynamic> notification) async {
+    final categoryId = notification['categoryId'];
+    final challengerEmail = notification['challengerEmail'];
+    final challengedUsername = username;
+    final categoryName = notification['categoryName'];
+    final numberOfQuestions = notification['numberOfQuestions'];
+    final timeLimit = notification['timeLimit'];
+
+    // Trimite cererea de acceptare a provocării
+    try {
+      final response = await http.post(
+        Uri.parse('http://localhost:3000/acceptChallenge'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'challengerEmail': challengerEmail,
+          'challengedUsername': challengedUsername,
+          'category': categoryName,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Dacă totul este OK, navighează la GameScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GameScreen(
+              categoryId: categoryId,
+              numberOfQuestions: numberOfQuestions,
+              timeLimit: timeLimit,
+            ),
+          ),
+        );
+      } else {
+        print('Failed to accept challenge: ${response.body}');
+      }
+    } catch (e) {
+      print('Error accepting challenge: $e');
+    }
+  }
+
+  void _showChallengePopup(Map<String, dynamic> notification) {
+    print('Notification Data: $notification');  // Verifică datele
+    int categoryId = notification['categoryId'] ?? 0;
+    String categoryName = notification['categoryName'] ?? 'Unknown';
+    int numberOfQuestions = notification['numberOfQuestions'] ?? 0;
+    int timeLimit = notification['timeLimit'] ?? 0;
+
+    print('Category ID: $categoryId');  // Verifică categoria
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text('Category: $categoryName'),
+              Text('Number of Questions: $numberOfQuestions'),
+              Text('Time Limit: $timeLimit seconds'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Închide dialogul
+                _startPlaying(notification); // Apelează funcția pentru a începe jocul
+              },
+              child: const Text('Start Playing'),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  @override
   Widget _buildAchievementsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,8 +333,8 @@ Widget build(BuildContext context) {
                     children: achievements.map((achievement) {
                       return _buildAchievementCard(
                         achievement['title'] ?? 'No Title',
-                      achievement['description'] ?? 'No Description',
-                      achievement['imagePath'] ?? 'assets/images/badge_1.png',
+                        achievement['description'] ?? 'No Description',
+                        achievement['imagePath'] ?? 'assets/images/badge_1.png',
                       );
                     }).toList(),
                   ),
@@ -259,14 +345,14 @@ Widget build(BuildContext context) {
   Widget _buildAchievementCard(String title, String description, String imagePath) {
     return Card(
       child: ListTile(
-        leading: Image.asset('assets/images/badge_1', width: 50, height: 50),
+        leading: Image.asset(imagePath, width: 50, height: 50),
         title: Text(title),
         subtitle: Text(description),
       ),
     );
   }
 
- Widget _buildCategoryProgressSection() {
+  Widget _buildCategoryProgressSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -293,4 +379,3 @@ Widget build(BuildContext context) {
     );
   }
 }
-

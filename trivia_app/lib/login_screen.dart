@@ -46,6 +46,12 @@ class LoginScreen extends StatelessWidget {
     }
   }
 
+  // Funcție pentru a salva utilizatorul curent
+  Future<void> saveCurrentUser(String email) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('currentUserEmail', email);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

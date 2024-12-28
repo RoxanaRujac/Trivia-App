@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
 
 const db = mysql.createConnection({
   host: 'localhost',
@@ -225,30 +225,225 @@ app.post('/getAchievements', (req, res) => {
   });
 });
 
-app.post('/getChallenges', (req, res) => {
-  const { email } = req.body;
+// Save challenge
+app.post('/saveChallenge', (req, res) => {
+  const {
+    challenger_email,
+    challenged_username,
+    number_of_questions,
+    time_limit,
+    category,
+  } = req.body;
 
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
+  // Validare parametri
+  if (
+    !challenger_email ||
+    !challenged_username ||
+    !number_of_questions ||
+    !time_limit ||
+    !category
+  ) {
+    return res.status(400).json({ message: 'All fields are required' });
   }
 
-  const getChallengesQuery = `
-    SELECT c.challenge_id, u1.name AS challenger_name, c.status, c.created_at
-    FROM challenges c
-    JOIN user u1 ON c.challenger_id = u1.user_id
-    JOIN user u2 ON c.challenged_id = u2.user_id
-    WHERE u2.email = ?
+  // Query pentru a salva provocarea în baza de date
+  const query = `
+    INSERT INTO challenges 
+    (challenger_email, challenged_username, number_of_questions, time_limit, category, status)
+    VALUES (?, ?, ?, ?, ?, 'pending')
   `;
 
-  db.query(getChallengesQuery, [email], (err, results) => {
+  db.query(
+    query,
+    [challenger_email, challenged_username, number_of_questions, time_limit, category],
+    (err, result) => {
+      if (err) {
+        console.error('Error saving challenge:', err);
+        return res.status(500).json({ message: 'Error saving challenge' });
+      }
+
+      res.status(201).json({ message: 'Challenge saved successfully' });
+    }
+  );
+});
+
+app.post('/getNotifications', (req, res) => {
+  const { username } = req.body;
+
+  console.log('Received request for notifications with username:', username);
+
+  if (!username) {
+    console.error('No username provided');
+    return res.status(400).json({ message: 'Username is required' });
+  }
+
+  const query = `
+    SELECT 
+      c.challenger_email, 
+      u.username AS challenger_username, 
+      c.category AS category_name,
+      cat.category_id,  -- Adăugăm ID-ul categoriei
+      c.number_of_questions, 
+      c.time_limit
+    FROM challenges c
+    INNER JOIN user u ON c.challenger_email = u.email
+    INNER JOIN categories cat ON c.category = cat.name  -- Alăturăm tabelul categories pentru a obține ID-ul
+    WHERE c.challenged_username = ? AND c.status = 'pending';
+  `;
+
+  db.query(query, [username], (err, result) => {
     if (err) {
-      console.error('Error fetching challenges:', err);
-      return res.status(500).json({ message: 'Error fetching challenges' });
+      console.error('Error during query execution:', err);
+      return res.status(500).json({ message: 'Error fetching notifications' });
     }
 
-    res.json(results);
+    console.log('Query result:', result); 
+
+    if (!Array.isArray(result)) {
+      console.log('Unexpected response format:', result);
+      return res.status(500).json({ message: 'Unexpected response format from DB' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No notifications found' });
+    }
+
+    const formattedNotifications = result.map(notification => ({
+      sender: notification.challenger_username || '',
+      challengerEmail: notification.challenger_email || '',
+      categoryName: notification.category_name || '',
+      categoryId: notification.category_id, // ID-ul categoriei
+      numberOfQuestions: notification.number_of_questions || 0,
+      timeLimit: notification.time_limit || 0,
+    }));
+
+    return res.status(200).json(formattedNotifications);
   });
 });
+
+app.post('/acceptChallenge', (req, res) => {
+  const { challengerEmail, challengedUsername, category } = req.body;
+
+  if (!challengerEmail|| !challengedUsername || !category) {
+    console.log('Missing fields:', {
+      challengerEmail,
+      challengedUsername,
+      category
+    });
+    return res.status(400).json({ message: 'Missing required fields' });
+  }
+  const query = `
+    UPDATE challenges
+    SET status = 'accepted'
+    WHERE challenger_email = ? 
+      AND challenged_username = ? 
+      AND category = ? 
+      AND status = 'pending';
+  `;
+
+  db.query(query, [challengerEmail, challengedUsername, category], (err, result) => {
+    if (err) {
+      console.error('Error updating challenge status:', err);
+      return res.status(500).json({ message: 'Error updating challenge status' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Challenge not found or already accepted' });
+    }
+
+    return res.status(200).json({ message: 'Challenge accepted successfully' });
+  });
+});
+
+app.post('/completeQuiz', (req, res) => {
+  const { userEmail, categoryId } = req.body;
+
+  if (!userEmail || !categoryId) {
+    return res.status(400).json({ message: 'User email and Category ID are required' });
+  }
+
+  const checkProgressQuery = `
+    SELECT completed_quizzes 
+    FROM user_quiz_progress 
+    WHERE user_email = ? AND category_id = ?
+  `;
+
+  db.query(checkProgressQuery, [userEmail, categoryId], (err, results) => {
+    if (err) {
+      console.error('Error checking quiz progress:', err);
+      return res.status(500).json({ message: 'Error checking quiz progress' });
+    }
+
+    if (results.length === 0) {
+      // Dacă nu există progres, inserăm un nou rând
+      const insertProgressQuery = `
+        INSERT INTO user_quiz_progress (user_email, category_id, completed_quizzes) 
+        VALUES (?, ?, 1)
+      `;
+      db.query(insertProgressQuery, [userEmail, categoryId], (err, result) => {
+        if (err) {
+          console.error('Error inserting quiz progress:', err);
+          return res.status(500).json({ message: 'Error inserting quiz progress' });
+        }
+        return res.status(201).json({ message: 'Quiz progress recorded', badgeAwarded: false });
+      });
+    } else {
+      // Actualizăm progresul existent
+      const completedQuizzes = results[0].completed_quizzes + 1;
+
+      const updateProgressQuery = `
+        UPDATE user_quiz_progress 
+        SET completed_quizzes = ?
+        WHERE user_email = ? AND category_id = ?
+      `;
+      db.query(updateProgressQuery, [completedQuizzes, userEmail, categoryId], (err, result) => {
+        if (err) {
+          console.error('Error updating quiz progress:', err);
+          return res.status(500).json({ message: 'Error updating quiz progress' });
+        }
+
+        // Verificăm dacă utilizatorul a completat 10 quiz-uri
+        if (completedQuizzes === 10) {
+          return res.status(200).json({ message: 'Quiz progress updated, badge awarded!', badgeAwarded: true });
+        } else {
+          return res.status(200).json({ message: 'Quiz progress updated', badgeAwarded: false });
+        }
+      });
+    }
+  });
+});
+
+app.post('/getBadges', (req, res) => {
+  const { userEmail } = req.body;
+
+  if (!userEmail) {
+    return res.status(400).json({ message: 'User email is required' });
+  }
+
+  const query = `
+    SELECT category_id, completed_quizzes 
+    FROM user_quiz_progress 
+    WHERE user_email = ?
+  `;
+
+  db.query(query, [userEmail], (err, results) => {
+    if (err) {
+      console.error('Error fetching badges:', err);
+      return res.status(500).json({ message: 'Error fetching badges' });
+    }
+
+    // Generăm lista de badge-uri
+    const badges = results
+      .filter((row) => row.completed_quizzes >= 10)
+      .map((row) => ({
+        categoryId: row.category_id,
+        badgeName: `Category ${row.category_id} Badge`,
+      }));
+
+    res.json({ badges });
+  });
+});
+
 
 
 app.listen(3000, () => {

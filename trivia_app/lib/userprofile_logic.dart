@@ -25,7 +25,7 @@ class UserProfileLogic {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        return data['username'] ?? 'Unknown';
+        return data['username'] ?? 'Unknown'; 
       } else {
         print('Failed to fetch username: ${response.body}');
         return 'Unknown';
@@ -36,13 +36,39 @@ class UserProfileLogic {
     }
   }
 
-  // Obține notificările (hardcodate pentru moment)
-  List<String> getNotifications() {
-    return [
-      'RandomPlayer challenged you for a quiz!',
-      'Friend123 challenged you for a quiz!',
-    ];
+  // Fetch notificările de la server
+Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
+  print('Fetching notifications for username: $username');
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/getNotifications'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'username': username}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List<dynamic>;
+
+      // Mapăm notificările pentru a le returna în forma dorită
+      return data.map((notification) {
+        return {
+          'sender': notification['sender'] ?? '',
+          'challengerEmail': notification['challengerEmail'] ?? '',
+          'categoryName': notification['categoryName'] ?? '',
+          'categoryId': notification['categoryId'] ?? 0,
+          'numberOfQuestions': notification['numberOfQuestions'] ?? 0,
+          'timeLimit': notification['timeLimit'] ?? 0,
+        };
+      }).toList();
+    } else {
+      print('Failed to fetch notifications: ${response.body}');
+      return [];
+    }
+  } catch (e) {
+    print('Error fetching notifications: $e');
+    return [];
   }
+} 
 
   // Fetch realizările din API
   Future<List<Map<String, dynamic>>> fetchAchievements(String email) async {
@@ -110,3 +136,4 @@ class UserProfileLogic {
     };
   }
 }
+

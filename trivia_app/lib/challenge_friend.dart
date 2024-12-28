@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:trivia_app/game_screen.dart';
 import 'user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class ChallengeFriendPage extends StatefulWidget {
   const ChallengeFriendPage({super.key});
@@ -18,6 +20,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
   int? timeLimit;
   String? category;
   bool isReadyForChallenge = false;
+  String? currentUsername;
 
   //choose the number of questions
   void chooseNumberOfQuestions(BuildContext context) {
@@ -217,6 +220,49 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     });
   }
 
+  Future<String?> getEmailFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_email');
+}
+
+  Future saveChallenge() async {
+    final String apiUrl = 'http://localhost:3000/saveChallenge';
+    // Citește email-ul din SharedPreferences
+    String? challengerEmail = await getEmailFromSharedPreferences();
+    if (challengerEmail == null) {
+      print('Email not found in SharedPreferences');
+      return;
+    }
+
+    // Verifică dacă toate câmpurile sunt complete
+    if (selectedUser == null || numberOfQuestions == null || timeLimit == null || category == null) {
+      print('All fields are required before saving the challenge');
+      return;
+    }
+
+    // Construiește corpul cererii
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "challenger_email": challengerEmail,
+        "challenged_username": selectedUser,
+        "number_of_questions": numberOfQuestions,
+        "time_limit": timeLimit,
+        "category": category,
+      }),
+    );
+
+    // Gestionează răspunsul
+    if (response.statusCode == 201) {
+      print('Challenge saved successfully');
+      // Alte acțiuni, dacă e cazul
+    } else {
+      print('Failed to save challenge: ${response.body}');
+    }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -296,7 +342,9 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
             //if all options all selected => start button, else => still the 3 buttons
             isReadyForChallenge
                 ? ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await saveChallenge();
+
                       Map<String, int> categoryMap = {
                         'space': 1,
                         'history': 2,

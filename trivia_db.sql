@@ -176,26 +176,18 @@ INSERT INTO user_achievements (email, achievement_id)
 VALUES ('buna@gmail.com', 1), ('buna@gmail.com', 2), ('eu@gmail.com', 3), ('eu@gmail.com', 1);
 SET FOREIGN_KEY_CHECKS = 1;
 
+DROP TABLE IF EXISTS `challenges`;
 CREATE TABLE challenges (
-  challenge_id INT AUTO_INCREMENT PRIMARY KEY,
+  id INT AUTO_INCREMENT PRIMARY KEY,  -- ID unic pentru fiecare provocare
   challenger_email VARCHAR(255) NOT NULL,
-  challenged_email VARCHAR(255) NOT NULL,
-  status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  challenged_username VARCHAR(255) NOT NULL,
+  number_of_questions INT NOT NULL,   -- Numărul de întrebări din provocare
+  time_limit INT NOT NULL,            -- Limita de timp (în minute)
+  category VARCHAR(50) NOT NULL,      -- Categoria provocării
+  status ENUM('pending', 'accepted') DEFAULT 'pending',  -- Statusul provocării
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Data creării provocării
   FOREIGN KEY (challenger_email) REFERENCES user(email),
-  FOREIGN KEY (challenged_email) REFERENCES user(email)
+  FOREIGN KEY (challenged_username) REFERENCES user(username)
 );
-
-
-
-
-
-
-
-
-
-
-
-
 
 

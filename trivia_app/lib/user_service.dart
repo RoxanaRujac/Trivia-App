@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class UserService {
+  
   Future<List<String>> fetchUsers() async {
     try {
       final response = await http.get(Uri.parse('http://localhost:3000/user'));
