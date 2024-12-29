@@ -1,0 +1,223 @@
+"module Documentation exposing (..)
+
+{-| Returns all the ends (tails) of a list
+
+    tails [1, 2, 3] --> [[1, 2, 3], [2, 3], [3], []]
+-}
+tails : List a -> List (List a)
+tails l =
+    case l of
+        [] -> [[]]
+        x::xs -> (x::xs) :: tails xs
+
+
+
+{-| Returns all combinations for given list of elements.
+Combinations are **not** returned in lexicographic order.
+
+```
+    combinations [1, 2] --> [[1, 2], [1], [2], []]
+    combinations [1, 2, 3] --> [[1,2,3],[1,2],[1,3],[1],[2,3],[2],[3],[]]
+```
+
+-}
+combinations : List a -> List (List a)
+combinations list =
+    case list of
+        [] ->
+            [ [] ] -- Base case: the only subset of an empty list is an empty list
+
+        x :: xs ->
+            let
+                -- Get combinations of the rest of the list
+                restCombinations =
+                    combinations xs
+
+                -- Add the current element `x` to each combination from the rest
+                withX =
+                    List.map (\subset -> x :: subset) restCombinations
+            in
+            -- Combine subsets with and without the current element
+            withX ++ restCombinations
+
+"
+
+"module Countries exposing (..)
+
+import Browser
+import Html exposing (..)
+import Html.Attributes exposing (style)
+import Html.Events exposing (..)
+import Http
+import Json.Decode as Dec
+
+
+main =
+    Browser.element
+        { init = init
+        , update = update
+        , subscriptions = subscriptions
+        , view = view
+        }
+
+
+type alias Country =
+    { name : String
+    , area : Float
+    , region : String
+    , population : Int
+    }
+
+
+
+
+decodeCountry : Dec.Decoder Country
+decodeCountry =
+    Dec.map4 Country 
+        (Dec.at ["name", "common"] Dec.string)
+        (Dec.field "area" Dec.float)
+        (Dec.field "region" Dec.string)
+        (Dec.field "population" Dec.int)
+
+
+
+
+type Model
+    = Initial
+    | RequestSent
+    | Success (List Country)
+    | Error Http.Error
+
+
+
+init : () -> ( Model, Cmd Msg )
+init _ =
+    ( Initial
+    , Cmd.none
+    )
+
+
+
+
+type Msg
+    = GetCountries
+    | GotCountries (Result Http.Error (List Country))
+
+
+
+getCountries : Cmd Msg
+getCountries = Http.get 
+    { url = "https://restcountries.com/v3.1/all"
+    , expect = Http.expectJson GotCountries (Dec.list decodeCountry) 
+    }
+
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        GetCountries ->
+            ( RequestSent
+            , getCountries
+            )
+
+        GotCountries (Ok countries) ->
+            ( Success countries
+            , Cmd.none
+            )
+
+        GotCountries (Err err) ->
+            ( Error err
+            , Cmd.none
+            )
+
+sortByAreaDescending : Country -> Country -> Order
+sortByAreaDescending c1 c2 =
+    compare c2.area c1.area
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    Sub.none
+
+
+
+
+view : Model -> Html Msg
+view model =
+    case model of
+        Initial ->
+            viewInitial
+
+        RequestSent ->
+            div [] [ text "Loading..." ]
+
+        Success countries ->
+            viewSuccess countries
+
+        Error err ->
+            viewError err
+
+
+viewInitial : Html Msg
+viewInitial =
+    div []
+        [ button [ onClick GetCountries ] [ text "Get countries" ]
+        ]
+
+
+viewCountry : Country -> Html msg
+viewCountry { name, area, region, population } =
+    let
+        populationDensity =
+            if area > 0 then
+                String.fromFloat (toFloat population / area)
+            else
+                "N/A"
+    in
+    div [ style "border" "solid 1px", style "margin" "2px" ] 
+        [ p [] [ text <| "Name: " ++ name ]
+        , p [] [ text <| "Area: " ++ String.fromFloat area ++ " km²" ]
+        , p [] [ text <| "Population: " ++ String.fromInt population ]
+        , p [] [ text <| "Population Density: " ++ populationDensity ++ " people/km²" ]
+        ]
+
+
+
+
+viewSuccess : List Country -> Html msg
+viewSuccess countries =
+    let
+        sortedCountries = List.sortWith sortByAreaDescending countries
+    in
+    div []
+        (h2 [] [ text "Countries sorted by area (largest first)" ] :: List.map viewCountry sortedCountries)
+
+
+
+httpErrorToString : Http.Error -> String
+httpErrorToString err =
+    case err of
+        Http.BadUrl _ ->
+            "Bad Url"
+
+        Http.Timeout ->
+            "Timeout"
+
+        Http.NetworkError ->
+            "Network Error"
+
+        Http.BadStatus status ->
+            "BadS tatus: " ++ String.fromInt status
+
+        Http.BadBody _ ->
+            "Bad Body"
+
+
+viewError : Http.Error -> Html msg
+viewError err =
+    div [] [ h2 [] [ text "Rip" ], p [] [ text <| httpErrorToString err ] ]
+
+
+    
+"

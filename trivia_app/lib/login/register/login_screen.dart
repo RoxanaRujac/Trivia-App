@@ -1,29 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:trivia_app/login/register/login_screen_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-
-  LoginScreen({super.key});
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+  final LoginScreenService _loginScreenService = LoginScreenService();
 
   Future<void> login(BuildContext context) async {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({
-        'email': emailController.text,
-        'password': passwordController.text,
-      }),
+    bool success = await _loginScreenService.login(
+      emailController.text,
+      passwordController.text,
     );
 
-    if (response.statusCode == 200) {
-      print("User logged in successfully");
+
+     Future<void> saveEmailToSharedPreferences(String email) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_email', email); // Salvează email-ul
+      print('Email saved to SharedPreferences: $email');
+    } catch (e) {
+      print('Error saving email: $e');
+    }
+  }
+
+    if (success) {
+      saveEmailToSharedPreferences(emailController.text);
       Navigator.pushReplacementNamed(context, '/home_page');
     } else {
-      print("Login failed");
-      // Arată o eroare în UI
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account creation failed. Please try again.'),
+        ),
+      );
     }
   }
 
@@ -31,22 +41,25 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text('LogIn'),
         elevation: 5,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
+            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
           Padding(
-            padding: const EdgeInsets.only(right: 40),
+            padding: EdgeInsets.only(right: 40),
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
                   Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
+                  Navigator.pushNamed(context, '/create_account');
                   Navigator.pushNamed(context, '/create_account');
                 }
               },
@@ -62,7 +75,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ];
               },
-              icon: const Icon(Icons.menu),
+              icon: Icon(Icons.menu),
             ),
           )
         ],
@@ -83,7 +96,9 @@ class LoginScreen extends StatelessWidget {
             image: const AssetImage('assets/images/trivia_background.jpg'),
             fit: BoxFit.cover,
             colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.4), BlendMode.dstIn),
+              Colors.black.withOpacity(0.4),
+              BlendMode.dstIn,
+            ),
           ),
         ),
         child: Padding(
@@ -91,25 +106,43 @@ class LoginScreen extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              SizedBox(
+              Container(
                 width: 300,
                 child: TextField(
                   controller: emailController,
-                  decoration: const InputDecoration(labelText: 'Email'),
+                  decoration: InputDecoration(labelText: 'Email'),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
+              SizedBox(height: 20),
+              Container(
                 width: 300,
-                child: TextField(
-                  controller: passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: _isPasswordVisible,
+                  builder: (context, isPasswordVisible, child) {
+                    return TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            isPasswordVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            _isPasswordVisible.value = !isPasswordVisible;
+                          },
+                        ),
+                      ),
+                      obscureText: !isPasswordVisible,
+                    );
+                  },
                 ),
               ),
               const SizedBox(height: 40),
               ElevatedButton(
                 onPressed: () {
+                  login(context);
                   login(context);
                 },
                 style: ElevatedButton.styleFrom(
@@ -120,10 +153,12 @@ class LoginScreen extends StatelessWidget {
                   ),
                   backgroundColor: const Color(0xFF6A77B0),
                   foregroundColor: Colors.white,
-                  textStyle: const TextStyle(
-                      fontSize: 19, fontWeight: FontWeight.bold),
+                  textStyle: TextStyle(
+                    fontSize: 19,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-                child: Text('Login'),
+                child: Text('LogIn'),
               ),
             ],
           ),
