@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'game_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -24,6 +25,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
     'assets/images/travel.jpg',
     'assets/images/psychology.png',
     'assets/images/hobbies.jpg',
+    'assets/images/space.jpg',
   ];
 
   List<String> categories = [
@@ -40,6 +42,7 @@ class CategoriesScreenState extends State<CategoriesScreen> {
     "Travel Destinations",
     "Psychology",
     "Hobbies",
+    "Space",
   ];
 
   Widget _buildCategoryCard(String category, int i) {
@@ -124,6 +127,18 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text("Selected category: $_selectedCategory"),
+                      ),
+                    );
+
+                    //game page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(
+                          categoryId: 1,
+                          numberOfQuestions: 15,
+                          timeLimit: 10,
+                        ),
                       ),
                     );
                   },

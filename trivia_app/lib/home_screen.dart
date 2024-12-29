@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                     textStyle: const TextStyle(
                         fontSize: 19, fontWeight: FontWeight.bold),
                   ),
-                  child: Text('LogIn'),
+                  child: Text('Login'),
                 ),
               ),
             ),

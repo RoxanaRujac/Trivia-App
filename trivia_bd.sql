@@ -256,11 +256,10 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `user_id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(45) DEFAULT NULL,
-  `email` varchar(45) DEFAULT NULL,
+  `email` varchar(45) UNIQUE DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `profile_pic` tinyint DEFAULT NULL,
-  `achievements` text,
   `badges` text,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
@@ -272,9 +271,9 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-LOCK TABLES `user` WRITE;
+ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (6,'eu','eu@gmail.com','$2a$10$7j5UQacDyDekeqbcaxyWj.eTMLdC0vqfmqF2mlVcrFwSYdGmscqPy','2024-11-10 19:41:01',NULL,NULL,NULL),(7,'buna','buna@gmail.com','$2a$10$utj4Azy/.3MDoPSL7kWes.1RCUjUytE1KI8wBRHoaHQPxVILFlYl.','2024-11-11 16:36:25',NULL,NULL,NULL),(8,'roxi','roxi@gmail.com','$2a$10$GCBXZMXINQMs.aWKmHYa6uPp/PMfLe.rtS13De6MpJ8rG2ZdfyZ1e','2024-11-15 15:56:43',NULL,NULL,NULL);
+INSERT INTO `user` VALUES (6,'eu','eu@gmail.com','$2a$10$7j5UQacDyDekeqbcaxyWj.eTMLdC0vqfmqF2mlVcrFwSYdGmscqPy','2024-11-10 19:41:01',NULL,NULL),(7,'buna','buna@gmail.com','$2a$10$utj4Azy/.3MDoPSL7kWes.1RCUjUytE1KI8wBRHoaHQPxVILFlYl.','2024-11-11 16:36:25',NULL,NULL),(8,'roxi','roxi@gmail.com','$2a$10$GCBXZMXINQMs.aWKmHYa6uPp/PMfLe.rtS13De6MpJ8rG2ZdfyZ1e','2024-11-15 15:56:43',NULL,NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -288,4 +287,63 @@ UNLOCK TABLES;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2024-11-15 16:12:58
->>>>>>> ba88e7fce0bde9bc16045be0e3119105cce60018
+
+--
+-- Table structure for table `achievements`
+--
+SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `achievements`;
+SET FOREIGN_KEY_CHECKS = 1;
+CREATE TABLE IF NOT EXISTS `achievements` (
+  `achievement_id` INT NOT NULL AUTO_INCREMENT,
+  `name` VARCHAR(100) NOT NULL,
+  `description` TEXT,
+  PRIMARY KEY (`achievement_id`),
+  UNIQUE KEY `name_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Table structure for table `user_achievments`
+--
+DROP TABLE IF EXISTS `user_achievements`;
+CREATE TABLE `user_achievements` (
+  `email` varchar(45) NOT NULL,
+  `achievement_id` INT NOT NULL,
+  PRIMARY KEY (`email`, `achievement_id`),
+  FOREIGN KEY (`email`) REFERENCES `user` (`email`) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (`achievement_id`) REFERENCES `achievements` (`achievement_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO achievements (name, description) VALUES 
+('Rookie Scorer', 'Reach 1000 highscore'), ('Master Scorer', 'Reach 2500 highscore'), ('Legendary Scorer', 'Reach 5000 highscore'), ('First Quiz Conqueror', 'Complete 1 quiz'), ('Quiz Enthusiast', 'Complete 5 quizzes'), ('Quiz Master', 'Complete 10 quizzes'), ('Quiz Marathoner', 'Complete 50 quizzes'), ('Challenge Initiator', 'You won 1 challenge'), ('Challenge Hero', 'You won 5 challenges'), ('Challenge Champion', 'You won 10 challenges'), ('Welcome Aboard!', 'User logged in for the first time');
+
+SET FOREIGN_KEY_CHECKS = 0;
+INSERT INTO user_achievements (email, achievement_id)
+VALUES ('buna@gmail.com', 1), ('buna@gmail.com', 2), ('eu@gmail.com', 3), ('eu@gmail.com', 1);
+SET FOREIGN_KEY_CHECKS = 1;
+
+DROP TABLE IF EXISTS `challenges`;
+CREATE TABLE challenges (
+  id INT AUTO_INCREMENT PRIMARY KEY,  -- ID unic pentru fiecare provocare
+  challenger_email VARCHAR(255) NOT NULL,
+  challenged_username VARCHAR(255) NOT NULL,
+  number_of_questions INT NOT NULL,   -- Numărul de întrebări din provocare
+  time_limit INT NOT NULL,            -- Limita de timp (în minute)
+  category VARCHAR(50) NOT NULL,      -- Categoria provocării
+  status ENUM('pending', 'accepted') DEFAULT 'pending',  -- Statusul provocării
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  -- Data creării provocării
+  FOREIGN KEY (challenger_email) REFERENCES user(email),
+  FOREIGN KEY (challenged_username) REFERENCES user(username)
+);
+
+CREATE TABLE user_quiz_progress (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_email varchar(45) NOT NULL,
+    category_id INT NOT NULL,
+    completed_quizzes INT DEFAULT 0,
+    FOREIGN KEY (user_email) REFERENCES user(email),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+
+
