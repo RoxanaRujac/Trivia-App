@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,11 +48,11 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                const SizedBox(height: 200), // Space above the image
+                const SizedBox(height: 100), // Space above the image
                 // Image displayed above the buttons
                 Image.asset(
-                  'assets/images/logoCat.gif',
-                  height: 150,
+                  'assets/images/cat_intro.png',
+                  height: 250,
                 ),
                 const SizedBox(
                     height: 5), // Space between the image and buttons
@@ -90,11 +88,11 @@ class HomePage extends StatelessWidget {
                       Navigator.pushNamed(context, '/challenge');
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      backgroundColor: const Color(0xFFE5A7EA),
+                      backgroundColor: Color(0xFFE5A7EA),
                     ),
                     child: const Text(
                       'Challenge a Friend',

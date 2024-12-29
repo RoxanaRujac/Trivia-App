@@ -25,8 +25,7 @@ class HomeScreen extends StatelessWidget {
             padding: EdgeInsets.only(right: 8.0),
             child: CircleAvatar(
               backgroundColor: Color(0xFF6A77B0),
-              child: Icon(Icons.account_circle,
-                  size: 30, color: Colors.white), // Culoare fundal avatar
+              child: Icon(Icons.account_circle, size: 30, color: Colors.white),
             ),
           ),
         ],
@@ -88,7 +87,7 @@ class HomeScreen extends StatelessWidget {
                     textStyle: const TextStyle(
                         fontSize: 19, fontWeight: FontWeight.bold),
                   ),
-                  child: Text('Login'),
+                  child: const Text('Login'),
                 ),
               ),
             ),
@@ -113,7 +112,7 @@ class HomeScreen extends StatelessWidget {
                     textStyle: const TextStyle(
                         fontSize: 19, fontWeight: FontWeight.bold),
                   ),
-                  child: Text('Create an Account'),
+                  child: const Text('Create an Account'),
                 ),
               ),
             ),

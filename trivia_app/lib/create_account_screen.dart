@@ -1,43 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:trivia_app/create_account_service.dart';
 
 class CreateAccountScreen extends StatelessWidget {
+  CreateAccountScreen({super.key});
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
-
-  CreateAccountScreen({super.key});
+  final CreateAccountService _createAccountService = CreateAccountService();
 
   Future<void> createAccount(BuildContext context) async {
-    try {
-      if (nameController.text.isEmpty ||
-          emailController.text.isEmpty ||
-          passwordController.text.isEmpty) {
-        print("Please fill in all fields");
-        return;
-      }
+    bool success = await _createAccountService.createAccount(
+      nameController.text,
+      emailController.text,
+      passwordController.text,
+    );
 
-      final response = await http.post(
-        Uri.parse('http://localhost:3000/register'),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode({
-          'username': nameController.text,
-          'email': emailController.text,
-          'password': passwordController.text,
-        }),
+    if (success) {
+      Navigator.pushNamed(context, '/login');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Account creation failed. Please try again.'),
+        ),
       );
-
-      if (response.statusCode == 200) {
-        print("Account created successfully");
-        Navigator.pushNamed(context, '/login');
-      } else {
-        print("Account creation failed. Status code: ${response.statusCode}");
-        print("Response body: ${response.body}");
-      }
-    } catch (e) {
-      print("Error occurred: $e");
     }
   }
 
@@ -113,16 +99,16 @@ class CreateAccountScreen extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Name'),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
+              SizedBox(height: 20),
+              Container(
                 width: 300,
                 child: TextField(
                   controller: emailController,
                   decoration: const InputDecoration(labelText: 'Email'),
                 ),
               ),
-              const SizedBox(height: 20),
-              SizedBox(
+              SizedBox(height: 20),
+              Container(
                 width: 300,
                 child: ValueListenableBuilder<bool>(
                   valueListenable: _isPasswordVisible,
