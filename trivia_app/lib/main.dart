@@ -8,7 +8,6 @@ import 'login/register/login_screen.dart';
 import 'login/register/create_account_screen.dart';
 import 'help_page.dart';
 
-
 void main() {
   runApp(MyApp());
 }

@@ -23,6 +23,7 @@ cors: Enables cross-origin requests for the API.
 //------------------ Create a connection ---------------------------
 
 const db = mysql.createConnection({
+  //host: 'localhost',
   host: 'localhost',
   user: 'root', 
   password: 'root',
@@ -116,15 +117,21 @@ app.post('/login', (req, res) => {
 //----------------------------- Get list of users --------------------------
 
 app.get('/user', (req, res) => {
-  const query = 'SELECT username FROM user';
+  const { exclude } = req.query;
 
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error fetching users' });
+  const query = exclude
+    ? 'SELECT username FROM user WHERE email != ?'
+    : 'SELECT username FROM user';
 
-    res.json(results); // Returnează lista de utilizatori
+  db.query(query, exclude ? [exclude] : [], (err, results) => {
+    if (err) {
+      console.error('Error fetching users:', err);
+      return res.status(500).json({ message: 'Error fetching users' });
+    }
+
+    res.json(results);
   });
 });
-
 
 
 
