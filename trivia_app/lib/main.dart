@@ -7,6 +7,7 @@ import 'home_screen.dart';
 import 'login/register/login_screen.dart';
 import 'login/register/create_account_screen.dart';
 import 'help_page.dart';
+import 'package:trivia_app/game/leaderboard_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/challenge': (context) => ChallengeFriendPage(),
         '/user_profile': (context) => UserProfileScreen(),
         '/categories': (context) => CategoriesScreen(),
+        '/leaderboard': (context) => LeaderboardScreen(),
       },
     );
   }
