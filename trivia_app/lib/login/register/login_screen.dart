@@ -14,16 +14,15 @@ class LoginScreen extends StatelessWidget {
       passwordController.text,
     );
 
-
-     Future<void> saveEmailToSharedPreferences(String email) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_email', email); // Salvează email-ul
-      print('Email saved to SharedPreferences: $email');
-    } catch (e) {
-      print('Error saving email: $e');
+    Future<void> saveEmailToSharedPreferences(String email) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_email', email); // Salvează email-ul
+        print('Email saved to SharedPreferences: $email');
+      } catch (e) {
+        print('Error saving email: $e');
+      }
     }
-  }
 
     if (success) {
       saveEmailToSharedPreferences(emailController.text);

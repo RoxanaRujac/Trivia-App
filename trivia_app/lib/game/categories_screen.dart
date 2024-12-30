@@ -126,21 +126,21 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Selected category: $_selectedCategory"), 
+                        content: Text("Selected category: $_selectedCategory"),
                       ),
                     );
 
-                      //game page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameScreen(
-                            categoryId: 1,
-                            numberOfQuestions: 15,
-                            timeLimit: 5,
-                          ),
+                    //game page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(
+                          categoryId: 1,
+                          numberOfQuestions: 15,
+                          timeLimit: 5,
                         ),
-                      );
+                      ),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(

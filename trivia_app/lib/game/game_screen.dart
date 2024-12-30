@@ -20,7 +20,7 @@ class GameScreen extends StatefulWidget {
 
 class _GamePageState extends State<GameScreen> {
   bool isLoading = true;
-  GameLogic gameLogic = GameLogic(categoryId: 0, numQuestions: 15); 
+  GameLogic gameLogic = GameLogic(categoryId: 0, numQuestions: 15);
 
   late Timer _timer;
   int remainingTime = 0; // In seconds
@@ -32,7 +32,8 @@ class _GamePageState extends State<GameScreen> {
   void initState() {
     super.initState();
     remainingTime = widget.timeLimit * 60; // Convert minutes to seconds
-    gameLogic = GameLogic(categoryId: widget.categoryId, numQuestions: widget.numberOfQuestions);
+    gameLogic = GameLogic(
+        categoryId: widget.categoryId, numQuestions: widget.numberOfQuestions);
     startTimer();
     loadQuestions();
   }
@@ -87,7 +88,8 @@ class _GamePageState extends State<GameScreen> {
     });
     //no repeats
     gameLogic.questions.shuffle(); //mix mix mix
-    gameLogic.questions = gameLogic.questions.take(widget.numberOfQuestions).toList();
+    gameLogic.questions =
+        gameLogic.questions.take(widget.numberOfQuestions).toList();
   }
 
   @override
@@ -211,11 +213,11 @@ class _GamePageState extends State<GameScreen> {
         : Colors.transparent;
 
     return Container(
-      width: 160,  // Width for each button
-      height: 80,  // Height for each button
-      margin: EdgeInsets.symmetric(horizontal: 10),  // Margin between buttons
+      width: 160, // Width for each button
+      height: 80, // Height for each button
+      margin: EdgeInsets.symmetric(horizontal: 10), // Margin between buttons
       decoration: BoxDecoration(
-        color:  Color.fromARGB(255, 151, 103, 193),
+        color: Color.fromARGB(255, 151, 103, 193),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: borderColor,
@@ -233,7 +235,6 @@ class _GamePageState extends State<GameScreen> {
                   if (isCorrect) {
                     correctAnswersCount++;
                   }
-
                 });
 
                 // Delay to show correct/incorrect feedback
@@ -247,17 +248,16 @@ class _GamePageState extends State<GameScreen> {
                     });
                   }
                 });
-
               },
         child: Center(
-        child: Text(
-          answer['text'],
-          style: TextStyle(
-            fontSize: 12,
-            color: Color.fromARGB(255, 151, 103, 193),
-            fontWeight: FontWeight.bold,
+          child: Text(
+            answer['text'],
+            style: TextStyle(
+              fontSize: 12,
+              color: Color.fromARGB(255, 151, 103, 193),
+              fontWeight: FontWeight.bold,
+            ),
           ),
-        ),
         ),
         style: ElevatedButton.styleFrom(
           padding: EdgeInsets.all(0),
@@ -284,7 +284,8 @@ class _GamePageState extends State<GameScreen> {
       barrierDismissible: false,
       builder: (context) => AlertDialog(
         title: Text('Game Complete!'),
-        content: Text('Congratulations! You completed the game with $correctAnswersCount correct answers.'),
+        content: Text(
+            'Congratulations! You completed the game with $correctAnswersCount correct answers.'),
         actions: [
           TextButton(
             onPressed: () {

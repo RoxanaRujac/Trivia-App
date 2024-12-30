@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:trivia_app/challenge_friend.dart';
+import 'package:trivia_app/game/challenge_friend.dart';
 import 'package:trivia_app/main_home_page.dart';
-import 'package:trivia_app/user_profile.dart';
+import 'package:trivia_app/user/user_profile.dart';
 import 'home_screen.dart';
 import 'login/register/login_screen.dart';
 import 'login/register/create_account_screen.dart';
 import 'help_page.dart';
-import 'categories_screen.dart';
+import 'package:trivia_app/game/categories_screen.dart';
 
 void main() {
   runApp(const MyApp());

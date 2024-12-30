@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:trivia_app/userprofile_logic.dart';
-import 'package:trivia_app/game_screen.dart';
+import 'package:trivia_app/user/userprofile_logic.dart';
+import 'package:trivia_app/game/game_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -16,7 +16,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   String email = '';
   String username = '';
-  List<Map<String, dynamic>> notifications= [];
+  List<Map<String, dynamic>> notifications = [];
   List<Map<String, dynamic>> achievements = [];
   late Map<String, int> categoryProgress;
   late Map<String, String> badges;
@@ -105,7 +105,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   String category = earnedBadges.keys.elementAt(index);
                   return Column(
                     children: [
-                      Image.asset(earnedBadges[category]!, width: 60, height: 60),
+                      Image.asset(earnedBadges[category]!,
+                          width: 60, height: 60),
                       Text(category, style: const TextStyle(fontSize: 12)),
                     ],
                   );
@@ -162,7 +163,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               ElevatedButton(
                 onPressed: _showBadgeCollection,
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-                child: const Text('View My Badge Collection', style: TextStyle(color: Color(0xFF6A77B0))),
+                child: const Text('View My Badge Collection',
+                    style: TextStyle(color: Color(0xFF6A77B0))),
               ),
               const SizedBox(height: 40)
             ],
@@ -183,7 +185,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         const SizedBox(height: 20),
         Text(
           username,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.white),
+          style: const TextStyle(
+              fontSize: 32, fontWeight: FontWeight.w700, color: Colors.white),
         ),
         Text(
           email,
@@ -200,41 +203,44 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Widget _buildNotificationsSection() {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Text(
-        'NOTIFICATIONS',
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-      ),
-      notifications.isEmpty
-          ? const Center(
-              child: Text(
-                'No notifications available.',
-                style: TextStyle(color: Colors.white70),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'NOTIFICATIONS',
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        notifications.isEmpty
+            ? const Center(
+                child: Text(
+                  'No notifications available.',
+                  style: TextStyle(color: Colors.white70),
+                ),
+              )
+            : Column(
+                children: notifications
+                    .map((notification) => _buildNotificationCard(notification))
+                    .toList(),
               ),
-            )
-          : Column(
-              children: notifications.map((notification) => _buildNotificationCard(notification)).toList(),
-            ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
-Widget _buildNotificationCard(Map<String, dynamic> notification) {
-  return Card(
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    child: ListTile(
-      leading: const Icon(Icons.notifications, color: Color(0xFF6A77B0)),
-      title: Text('${notification['sender']} challenged you to a game!'),
-      onTap: () {
-        _showChallengePopup(notification);
-      },
-    ),
-  );
-}
+  Widget _buildNotificationCard(Map<String, dynamic> notification) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ListTile(
+        leading: const Icon(Icons.notifications, color: Color(0xFF6A77B0)),
+        title: Text('${notification['sender']} challenged you to a game!'),
+        onTap: () {
+          _showChallengePopup(notification);
+        },
+      ),
+    );
+  }
 
-   // Funcția pentru a naviga la ecranul de joc
+  // Funcția pentru a naviga la ecranul de joc
   void _startPlaying(Map<String, dynamic> notification) async {
     final categoryId = notification['categoryId'];
     final challengerEmail = notification['challengerEmail'];
@@ -276,13 +282,13 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
   }
 
   void _showChallengePopup(Map<String, dynamic> notification) {
-    print('Notification Data: $notification');  // Verifică datele
+    print('Notification Data: $notification'); // Verifică datele
     int categoryId = notification['categoryId'] ?? 0;
     String categoryName = notification['categoryName'] ?? 'Unknown';
     int numberOfQuestions = notification['numberOfQuestions'] ?? 0;
     int timeLimit = notification['timeLimit'] ?? 0;
 
-    print('Category ID: $categoryId');  // Verifică categoria
+    print('Category ID: $categoryId'); // Verifică categoria
 
     showDialog(
       context: context,
@@ -301,7 +307,8 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Închide dialogul
-                _startPlaying(notification); // Apelează funcția pentru a începe jocul
+                _startPlaying(
+                    notification); // Apelează funcția pentru a începe jocul
               },
               child: const Text('Start Playing'),
             ),
@@ -317,7 +324,8 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
       children: [
         const Text(
           'ACHIEVEMENTS',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         const SizedBox(height: 10),
         isAchievementsLoading
@@ -342,7 +350,8 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
     );
   }
 
-  Widget _buildAchievementCard(String title, String description, String imagePath) {
+  Widget _buildAchievementCard(
+      String title, String description, String imagePath) {
     return Card(
       child: ListTile(
         leading: Image.asset(imagePath, width: 50, height: 50),
@@ -358,17 +367,18 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
       children: [
         const Text(
           'CATEGORY PROGRESS',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        ...categoryProgress.entries.map((entry) => _buildCategoryProgressBar(entry.key, entry.value)),
+        ...categoryProgress.entries
+            .map((entry) => _buildCategoryProgressBar(entry.key, entry.value)),
       ],
     );
   }
 
   Widget _buildCategoryProgressBar(String category, int progress) {
-    String badgePath = progress == 10
-        ? badges[category]!
-        : 'assets/images/unknown_badge.png';
+    String badgePath =
+        progress == 10 ? badges[category]! : 'assets/images/unknown_badge.png';
 
     return Card(
       child: ListTile(
