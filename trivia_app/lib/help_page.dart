@@ -21,11 +21,10 @@ class HelpPage extends StatelessWidget {
             child: PopupMenuButton<String>(
               onSelected: (value) {
                 if (value == 'home') {
-                  Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(context, '/create_account');
-                } else if (value == 'log_in') {
-                  Navigator.pushNamed(context, '/log_in');
+                  Navigator.pushNamed(
+                      context, '/create_account'); // Mergi la Create Account
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -37,10 +36,6 @@ class HelpPage extends StatelessWidget {
                   const PopupMenuItem<String>(
                     value: 'create_account',
                     child: Text('Go to Create Account'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'log_in',
-                    child: Text('Go to Log In'),
                   ),
                 ];
               },
