@@ -46,7 +46,6 @@ class LoginScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
-            Navigator.pop(context);
           },
         ),
         actions: <Widget>[

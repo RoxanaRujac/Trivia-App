@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 //import 'package:http/http.dart' as http;
 import 'game_logic.dart';
+import 'package:shared_preferences/src/shared_preferences_legacy.dart';
 
 class GameScreen extends StatefulWidget {
   final int categoryId;
@@ -90,6 +91,11 @@ class _GamePageState extends State<GameScreen> {
     gameLogic.questions.shuffle(); //mix mix mix
     gameLogic.questions =
         gameLogic.questions.take(widget.numberOfQuestions).toList();
+  }
+
+  Future<String?> getCurrentUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('currentUserEmail');
   }
 
   @override
@@ -279,23 +285,52 @@ class _GamePageState extends State<GameScreen> {
   }
 
   void showGameCompleteDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text('Game Complete!'),
-        content: Text(
-            'Congratulations! You completed the game with $correctAnswersCount correct answers.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close the dialog
-              Navigator.pop(context); // Return to the previous screen
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
+    // Apelează metoda getCurrentUser()
+    getCurrentUser().then((userEmail) {
+      if (userEmail != null) {
+        gameLogic.submitScore(userEmail, correctAnswersCount).then((_) {
+          print('Score submitted successfully');
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              title: Text('Game Complete!'),
+              content: Text(
+                  'Congratulations! You completed the game with $correctAnswersCount correct answers.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Închide dialogul
+                    Navigator.pop(context); // Revino la ecranul anterior
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }).catchError((error) {
+          // Afișează o eroare dacă trimiterea scorului eșuează
+          print('Error submitting score: $error');
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => AlertDialog(
+              title: Text('Game Complete!'),
+              content: Text(
+                  'Congratulations! You completed the game with $correctAnswersCount correct answers. However, there was an error saving your score.'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Închide dialogul
+                    Navigator.pop(context); // Revino la ecranul anterior
+                  },
+                  child: Text('OK'),
+                ),
+              ],
+            ),
+          );
+        });
+      }
+    });
   }
 }
