@@ -113,8 +113,8 @@ CREATE TABLE `user` (
   `email` varchar(45) UNIQUE DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `profile_pic` tinyint DEFAULT NULL,
-  `badges` text,
+  `profile_pic` varchar(30) DEFAULT 'default.png',
+  `highscore` int,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
@@ -127,7 +127,7 @@ CREATE TABLE `user` (
 
  LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (6,'eu','eu@gmail.com','$2a$10$7j5UQacDyDekeqbcaxyWj.eTMLdC0vqfmqF2mlVcrFwSYdGmscqPy','2024-11-10 19:41:01',NULL,NULL),(7,'buna','buna@gmail.com','$2a$10$utj4Azy/.3MDoPSL7kWes.1RCUjUytE1KI8wBRHoaHQPxVILFlYl.','2024-11-11 16:36:25',NULL,NULL),(8,'roxi','roxi@gmail.com','$2a$10$GCBXZMXINQMs.aWKmHYa6uPp/PMfLe.rtS13De6MpJ8rG2ZdfyZ1e','2024-11-15 15:56:43',NULL,NULL);
+INSERT INTO `user` VALUES (6,'eu','eu@gmail.com','$2a$10$7j5UQacDyDekeqbcaxyWj.eTMLdC0vqfmqF2mlVcrFwSYdGmscqPy','2024-11-10 19:41:01','default.png',NULL),(7,'buna','buna@gmail.com','$2a$10$utj4Azy/.3MDoPSL7kWes.1RCUjUytE1KI8wBRHoaHQPxVILFlYl.','2024-11-11 16:36:25','default.png',NULL),(8,'roxi','roxi@gmail.com','$2a$10$GCBXZMXINQMs.aWKmHYa6uPp/PMfLe.rtS13De6MpJ8rG2ZdfyZ1e','2024-11-15 15:56:43','default.png',NULL);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -190,14 +190,17 @@ CREATE TABLE challenges (
   FOREIGN KEY (challenged_username) REFERENCES user(username)
 );
 
+DROP TABLE IF EXISTS `user_quiz_progress`;
 CREATE TABLE user_quiz_progress (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     user_email varchar(45) NOT NULL,
     category_id INT NOT NULL,
     completed_quizzes INT DEFAULT 0,
     FOREIGN KEY (user_email) REFERENCES user(email),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
+
+CREATE UNIQUE INDEX idx_user_category ON user_quiz_progress (user_email, category_id);
+
 
 
 

@@ -113,8 +113,8 @@ CREATE TABLE `user` (
   `email` varchar(45) UNIQUE DEFAULT NULL,
   `password` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `profile_pic` tinyint DEFAULT NULL,
-  `badges` text,
+  `profile_pic` varchar(30) DEFAULT NULL,
+  `highscore` int,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_id_UNIQUE` (`user_id`),
   UNIQUE KEY `username_UNIQUE` (`username`)
@@ -189,5 +189,18 @@ CREATE TABLE challenges (
   FOREIGN KEY (challenger_email) REFERENCES user(email),
   FOREIGN KEY (challenged_username) REFERENCES user(username)
 );
+
+DROP TABLE IF EXISTS `user_quiz_progress`;
+CREATE TABLE user_quiz_progress (
+    user_email varchar(45) NOT NULL,
+    category_id INT NOT NULL,
+    completed_quizzes INT DEFAULT 0,
+    FOREIGN KEY (user_email) REFERENCES user(email),
+    FOREIGN KEY (category_id) REFERENCES categories(category_id)
+);
+
+CREATE UNIQUE INDEX idx_user_category ON user_quiz_progress (user_email, category_id);
+
+
 
 

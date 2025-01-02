@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfileLogic {
-  // Obține email-ul din SharedPreferences
   Future<String?> getEmailFromPreferences() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -14,7 +13,6 @@ class UserProfileLogic {
     }
   }
 
-  // Fetch username de la server
   Future<String> fetchUsername(String email) async {
     try {
       final response = await http.post(
@@ -36,7 +34,6 @@ class UserProfileLogic {
     }
   }
 
-  // Fetch notificările de la server
 Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
   print('Fetching notifications for username: $username');
   try {
@@ -49,7 +46,6 @@ Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as List<dynamic>;
 
-      // Mapăm notificările pentru a le returna în forma dorită
       return data.map((notification) {
         return {
           'sender': notification['sender'] ?? '',
@@ -70,7 +66,6 @@ Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
   }
 } 
 
-  // Fetch realizările din API
   Future<List<Map<String, dynamic>>> fetchAchievements(String email) async {
     try {
       final response = await http.post(
@@ -81,13 +76,11 @@ Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List<dynamic>;
-
-        // Mapăm realizările pentru a le returna în forma dorită
         return data.map((achievement) {
           return {
             'title': achievement['name'] ?? '',
             'description': achievement['description'] ?? '',
-            'imagePath': 'assets/images/badge_1.png', // Folosim un imagePath implicit
+            'imagePath': 'assets/images/badge_1.png',
           };
         }).toList();
       } else {
@@ -100,25 +93,31 @@ Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
     }
   }
 
-  // Exemplu de progres pe categorii
-  Map<String, int> getCategoryProgress() {
-    return {
-      'General Knowledge': 5,
-      'Sports': 7,
-      'History': 0,
-      'UTCN': 3,
-      'Movies': 10,
-      'Music': 8,
-      'Mythology': 0,
-      'Famous Personalities': 2,
-      'Travel Destinations': 0,
-      'Psychology': 9,
-      'Hobbies': 1,
-      'Space': 0,
-    };
-  }
+ Future<Map<String, int>> fetchCategoryProgress(String email) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/getCategoryProgress'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email}),
+    );
 
-  // Exemplu de badge-uri per categorie
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body) as List<dynamic>;
+      return {
+        for (var progress in data)
+          progress['name'] != null && progress['completed_quizzes'] != null
+              ? progress['name']: 'Unknown Category': progress['completed_quizzes'] ?? 0,
+      };
+    } else {
+      print('Failed to fetch category progress: ${response.body}');
+      return {}; 
+    }
+  } catch (e) {
+    print('Error fetching category progress: $e');
+    return {}; 
+  }
+}
+
   Map<String, String> getBadges() {
     return {
       'General Knowledge': 'assets/images/general_knowledge_badge.png',
@@ -129,11 +128,45 @@ Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
       'Psychology': 'assets/images/psychology_badge.png',
       'Famous Personalities': 'assets/images/famous_personalities_badge.png',
       'Hobbies': 'assets/images/hobbies_badge.png',
-      'Space': 'assets/images/space_badge.png',
+      'space': 'assets/images/space_badge.png',
       'Travel Destinations': 'assets/images/travel_badge.png',
       'History': 'assets/images/history_badge.png',
       'Mythology': 'assets/images/mythology_badge.png',
     };
   }
+
+ Future<bool> updateProfilePicture(String email, String profilePic) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/updateProfilePicture'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email, 'profile_pic': profilePic}),
+    );
+
+    if (response.statusCode == 200) {
+      print('Profile picture updated successfully.');
+      return true;
+    } else {
+      print('Failed to update profile picture: ${response.body}');
+      return false;
+    }
+  } catch (e) {
+    print('Error updating profile picture: $e');
+    return false;
+  }
+}
+
+Future<String> fetchProfileImage(String email) async {
+  final response = await http.get(Uri.parse('http://localhost:3000/getProfileImage?email=$email'));
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    return data['profileImage'] ?? 'default.png';
+  } else {
+    throw Exception('Failed to fetch profile image');
+  }
+}
+
+
 }
 

@@ -53,4 +53,25 @@ class GameLogic {
   bool isLastQuestion() {
     return currentQuestionIndex == numQuestions - 1;
   }
+  
+  Future<void> updateUserQuizProgress(String userEmail) async {
+  final url = Uri.parse('http://localhost:3000/update_quiz_progress');
+  try {
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({
+        'user_email': userEmail,
+        'category_id': categoryId,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to update quiz progress');
+    }
+  } catch (e) {
+    throw Exception('Error updating quiz progress: $e');
+  }
+}
+
 }

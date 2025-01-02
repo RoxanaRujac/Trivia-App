@@ -21,8 +21,6 @@ db.connect((err) => {
   console.log('Connected to MySQL Database');
 });
 
-
-
 // Register new user
 app.post('/register', (req, res) => {
   const { username, email, password } = req.body;
@@ -60,8 +58,6 @@ app.post('/register', (req, res) => {
   });
 });
 
-
-
 // User login
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
@@ -95,7 +91,6 @@ app.post('/login', (req, res) => {
     res.json({ message: 'Login successful', token });
   });
 });
-
 
 // get users
 app.get('/user', (req, res) => {
@@ -131,7 +126,6 @@ app.post('/getUsername', (req, res) => {
   });
 });
 
-//quiz
 app.get('/questions', (req, res) => {
   const { category_id } = req.query;
 
@@ -225,7 +219,6 @@ app.post('/getAchievements', (req, res) => {
   });
 });
 
-// Save challenge
 app.post('/saveChallenge', (req, res) => {
   const {
     challenger_email,
@@ -355,96 +348,89 @@ app.post('/acceptChallenge', (req, res) => {
   });
 });
 
-app.post('/completeQuiz', (req, res) => {
-  const { userEmail, categoryId } = req.body;
-
-  if (!userEmail || !categoryId) {
-    return res.status(400).json({ message: 'User email and Category ID are required' });
-  }
-
-  const checkProgressQuery = `
-    SELECT completed_quizzes 
-    FROM user_quiz_progress 
-    WHERE user_email = ? AND category_id = ?
-  `;
-
-  db.query(checkProgressQuery, [userEmail, categoryId], (err, results) => {
-    if (err) {
-      console.error('Error checking quiz progress:', err);
-      return res.status(500).json({ message: 'Error checking quiz progress' });
-    }
-
-    if (results.length === 0) {
-      // Dacă nu există progres, inserăm un nou rând
-      const insertProgressQuery = `
-        INSERT INTO user_quiz_progress (user_email, category_id, completed_quizzes) 
-        VALUES (?, ?, 1)
-      `;
-      db.query(insertProgressQuery, [userEmail, categoryId], (err, result) => {
-        if (err) {
-          console.error('Error inserting quiz progress:', err);
-          return res.status(500).json({ message: 'Error inserting quiz progress' });
-        }
-        return res.status(201).json({ message: 'Quiz progress recorded', badgeAwarded: false });
-      });
-    } else {
-      // Actualizăm progresul existent
-      const completedQuizzes = results[0].completed_quizzes + 1;
-
-      const updateProgressQuery = `
-        UPDATE user_quiz_progress 
-        SET completed_quizzes = ?
-        WHERE user_email = ? AND category_id = ?
-      `;
-      db.query(updateProgressQuery, [completedQuizzes, userEmail, categoryId], (err, result) => {
-        if (err) {
-          console.error('Error updating quiz progress:', err);
-          return res.status(500).json({ message: 'Error updating quiz progress' });
-        }
-
-        // Verificăm dacă utilizatorul a completat 10 quiz-uri
-        if (completedQuizzes === 10) {
-          return res.status(200).json({ message: 'Quiz progress updated, badge awarded!', badgeAwarded: true });
-        } else {
-          return res.status(200).json({ message: 'Quiz progress updated', badgeAwarded: false });
-        }
-      });
-    }
-  });
-});
-
-app.post('/getBadges', (req, res) => {
-  const { userEmail } = req.body;
-
-  if (!userEmail) {
-    return res.status(400).json({ message: 'User email is required' });
-  }
+app.post('/update_quiz_progress', (req, res) => {
+  const { user_email, category_id } = req.body;
 
   const query = `
-    SELECT category_id, completed_quizzes 
-    FROM user_quiz_progress 
-    WHERE user_email = ?
+    INSERT INTO user_quiz_progress (user_email, category_id, completed_quizzes)
+    VALUES (?, ?, 1)
+    ON DUPLICATE KEY UPDATE completed_quizzes = completed_quizzes + 1
   `;
 
-  db.query(query, [userEmail], (err, results) => {
+  db.query(query, [user_email, category_id], (err, results) => {
     if (err) {
-      console.error('Error fetching badges:', err);
-      return res.status(500).json({ message: 'Error fetching badges' });
+      console.error(err);
+      return res.status(500).send('Error updating quiz progress');
     }
-
-    // Generăm lista de badge-uri
-    const badges = results
-      .filter((row) => row.completed_quizzes >= 10)
-      .map((row) => ({
-        categoryId: row.category_id,
-        badgeName: `Category ${row.category_id} Badge`,
-      }));
-
-    res.json({ badges });
+    res.send('Quiz progress updated successfully');
   });
 });
 
+app.post('/getCategoryProgress', (req, res) => {
+  const { email } = req.body;
 
+  const query = `
+    SELECT c.name, uqp.completed_quizzes
+    FROM user_quiz_progress uqp
+    JOIN categories c ON uqp.category_id = c.category_id
+    WHERE uqp.user_email = ?
+  `;
+
+  db.query(query, [email], (err, results) => {
+    if (err) {
+      console.error('Error fetching category progress:', err);
+      return res.status(500).send('Error fetching category progress');
+    }
+
+    res.json(results);
+  });
+});
+
+app.post('/updateProfilePicture', (req, res) => {
+  const { email, profile_pic } = req.body;
+
+  if (!email || !profile_pic) {
+    return res.status(400).json({ message: 'Email and profile picture are required.' });
+  }
+
+  const query = 'UPDATE user SET profile_pic = ? WHERE email = ? AND profile_pic="default.png"';
+  db.query(query, [profile_pic, email], (err, result) => {
+    if (err) {
+      console.error('Error updating profile picture:', err);
+      return res.status(500).json({ message: 'Database error.' });
+    }
+
+    if (result.affectedRows > 0) {
+      res.status(200).json({ message: 'Profile picture updated successfully.' });
+    } else {
+      res.status(404).json({ message: 'User not found.' });
+    }
+  });
+});
+
+app.get('/getProfileImage', (req, res) => {
+  const email = req.query.email;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email is required' });
+  }
+
+  const query = 'SELECT profile_pic FROM user WHERE email = ?';
+
+  db.query(query, [email], (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (results.length > 0) {
+      const profileImage = results[0].profile_pic || 'default.png'; // Imagine implicită
+      res.json({ profileImage });
+    } else {
+      res.status(404).json({ error: 'User not found' });
+    }
+  });
+});
 
 app.listen(3000, () => {
   console.log(`Server running on port 3000`);

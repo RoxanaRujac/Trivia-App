@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-//import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'game_logic.dart';
 
 class GameScreen extends StatefulWidget {
@@ -27,14 +27,27 @@ class _GamePageState extends State<GameScreen> {
   String? selectedAnswer;
   bool isAnswered = false;
   int correctAnswersCount = 0;
+  String? userEmail;
 
   @override
   void initState() {
     super.initState();
+    fetchUserEmail();
     remainingTime = widget.timeLimit * 60; // Convert minutes to seconds
     gameLogic = GameLogic(categoryId: widget.categoryId, numQuestions: widget.numberOfQuestions);
     startTimer();
     loadQuestions();
+  }
+
+  Future<void> fetchUserEmail() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      setState(() {
+        userEmail = prefs.getString('user_email');
+      });
+    } catch (e) {
+      print('Error reading email from shared_preferences: $e');
+    }
   }
 
   @override
@@ -279,22 +292,29 @@ class _GamePageState extends State<GameScreen> {
   }
 
   showGameCompleteDialog() {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: Text('Game Complete!'),
-        content: Text('Congratulations! You completed the game with $correctAnswersCount correct answers.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close the dialog
-              Navigator.pop(context); // Return to the previous screen
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
-    );
-  }
+  showDialog(
+    context: context,
+    barrierDismissible: false,
+    builder: (context) => AlertDialog(
+      title: Text('Game Complete!'),
+      content: Text('Congratulations! You completed the game with $correctAnswersCount correct answers.'),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            try {
+              await gameLogic.updateUserQuizProgress(userEmail!);
+            } catch (e) {
+              print('Error updating quiz progress: $e');
+            }
+
+            Navigator.pop(context); 
+            Navigator.pop(context); 
+          },
+          child: Text('OK'),
+        ),
+      ],
+    ),
+  );
+}
+
 }

@@ -18,16 +18,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   String username = '';
   List<Map<String, dynamic>> notifications= [];
   List<Map<String, dynamic>> achievements = [];
-  late Map<String, int> categoryProgress;
+  late Map<String, int> categoryProgress = {};
   late Map<String, String> badges;
 
   bool isAchievementsLoading = true;
+
+  String _profileImage = 'assets/images/default.png';
+
+  final List<String> _profileImages = [
+    'assets/images/female.png',
+    'assets/images/male.png',
+  ];
 
   @override
   void initState() {
     super.initState();
     _initializeUserProfile();
-    categoryProgress = _logic.getCategoryProgress();
     badges = _logic.getBadges();
   }
 
@@ -53,6 +59,16 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         achievements = fetchedAchievements;
         isAchievementsLoading = false;
       });
+
+      final fetchedCategoryProgress = await _logic.fetchCategoryProgress(email);
+      setState(() {
+        categoryProgress = fetchedCategoryProgress;
+    });
+
+    final fetchedProfileImage = await _logic.fetchProfileImage(email);
+    setState(() {
+      _profileImage = 'assets/images/$fetchedProfileImage'; // Actualizează imaginea
+    });
     }
   }
 
@@ -60,69 +76,77 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
   }
 
-  void _showBadgeCollection() {
-    Map<String, String> earnedBadges = {};
-    categoryProgress.forEach((category, progress) {
-      if (progress == 10) {
-        earnedBadges[category] = badges[category]!;
-      }
-    });
+void _showBadgeCollection() {
+  // Creăm lista de badge-uri pe baza progresului
+  List<Map<String, String>> categoryList = [];
+  categoryProgress.forEach((category, progress) {
+    String badgePath = progress >= 10
+        ? badges[category] ?? 'assets/images/unknown_badge.png'
+        : 'assets/images/unknown_badge.png'; // Badge necunoscut dacă progresul este < 3
 
-    // Dacă nu sunt badge-uri câștigate, afișăm un mesaj
-    if (earnedBadges.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('No Earned Badges'),
-            content: const Text('You have not earned any badges yet.'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      // Afișăm badge-urile câștigate într-un grid
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('My Badge Collection'),
-            content: SizedBox(
-              height: 300, // Adjust based on number of badges
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: earnedBadges.length,
-                itemBuilder: (BuildContext context, int index) {
-                  String category = earnedBadges.keys.elementAt(index);
-                  return Column(
-                    children: [
-                      Image.asset(earnedBadges[category]!, width: 60, height: 60),
-                      Text(category, style: const TextStyle(fontSize: 12)),
-                    ],
-                  );
-                },
-              ),
+    categoryList.add({
+      'category': category,
+      'badge': badgePath,
+    });
+  });
+
+  // Afișăm badge-urile într-un dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('My Badge Collection'),
+        content: Container(
+          height: 400, // Setează o înălțime fixă
+          width: 300,  // Setează o lățime fixă
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3, // 3 coloane pentru un grid 3x4
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Close'),
-              ),
-            ],
-          );
-        },
+            itemCount: categoryList.length, // Numărul de badge-uri
+            itemBuilder: (BuildContext context, int index) {
+              var categoryData = categoryList[index];
+              String category = categoryData['category']!;
+              String badgePath = categoryData['badge']!;
+
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    child: Image.asset(
+                      badgePath,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover, // Asigură-te că imaginea se potrivește
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    category,
+                    style: const TextStyle(fontSize: 12),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Închide dialogul
+            },
+            child: const Text('Close'),
+          ),
+        ],
       );
-    }
-  }
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -173,31 +197,41 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   Widget _buildHeader() {
-    return Column(
-      children: [
-        const CircleAvatar(
-          radius: 80,
-          backgroundColor: Color(0xFF6A77B0),
-          child: Icon(Icons.account_circle, size: 100, color: Colors.white),
+  return Column(
+    children: [
+      CircleAvatar(
+        radius: 80,
+        backgroundColor: const Color(0xFF6A77B0),
+        backgroundImage: AssetImage(_profileImage),
+      ),
+      const SizedBox(height: 20),
+      Text(
+        username,
+        style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.white),
+      ),
+      Text(
+        email,
+        style: const TextStyle(fontSize: 20, color: Colors.white70),
+      ),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        onPressed: _showImagePicker,  // Apelează funcția pentru selectarea imaginii
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+        child: const Text(
+          'Edit Profile Picture',
+          style: TextStyle(color: Color(0xFF6A77B0)),
         ),
-        const SizedBox(height: 20),
-        Text(
-          username,
-          style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w700, color: Colors.white),
-        ),
-        Text(
-          email,
-          style: const TextStyle(fontSize: 20, color: Colors.white70),
-        ),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          onPressed: _logout,
-          style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
-          child: const Text('Logout'),
-        ),
-      ],
-    );
-  }
+      ),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        onPressed: _logout,
+        style: ElevatedButton.styleFrom(backgroundColor: Colors.white),
+        child: const Text('Logout'),
+      ),
+    ],
+  );
+}
+
 
   Widget _buildNotificationsSection() {
   return Column(
@@ -207,6 +241,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         'NOTIFICATIONS',
         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       ),
+      const SizedBox(height: 10),
       notifications.isEmpty
           ? const Center(
               child: Text(
@@ -234,7 +269,6 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
   );
 }
 
-   // Funcția pentru a naviga la ecranul de joc
   void _startPlaying(Map<String, dynamic> notification) async {
     final categoryId = notification['categoryId'];
     final challengerEmail = notification['challengerEmail'];
@@ -243,7 +277,6 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
     final numberOfQuestions = notification['numberOfQuestions'];
     final timeLimit = notification['timeLimit'];
 
-    // Trimite cererea de acceptare a provocării
     try {
       final response = await http.post(
         Uri.parse('http://localhost:3000/acceptChallenge'),
@@ -256,7 +289,6 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
       );
 
       if (response.statusCode == 200) {
-        // Dacă totul este OK, navighează la GameScreen
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -276,13 +308,13 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
   }
 
   void _showChallengePopup(Map<String, dynamic> notification) {
-    print('Notification Data: $notification');  // Verifică datele
+    print('Notification Data: $notification');  
     int categoryId = notification['categoryId'] ?? 0;
     String categoryName = notification['categoryName'] ?? 'Unknown';
     int numberOfQuestions = notification['numberOfQuestions'] ?? 0;
     int timeLimit = notification['timeLimit'] ?? 0;
 
-    print('Category ID: $categoryId');  // Verifică categoria
+    print('Category ID: $categoryId');  
 
     showDialog(
       context: context,
@@ -300,8 +332,8 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
           actions: [
             TextButton(
               onPressed: () {
-                Navigator.pop(context); // Închide dialogul
-                _startPlaying(notification); // Apelează funcția pentru a începe jocul
+                Navigator.pop(context); 
+                _startPlaying(notification); 
               },
               child: const Text('Start Playing'),
             ),
@@ -353,29 +385,128 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
   }
 
   Widget _buildCategoryProgressSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'CATEGORY PROGRESS',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-        ),
-        ...categoryProgress.entries.map((entry) => _buildCategoryProgressBar(entry.key, entry.value)),
-      ],
-    );
-  }
-
-  Widget _buildCategoryProgressBar(String category, int progress) {
-    String badgePath = progress == 10
-        ? badges[category]!
-        : 'assets/images/unknown_badge.png';
-
-    return Card(
-      child: ListTile(
-        title: Text(category),
-        subtitle: LinearProgressIndicator(value: progress / 10),
-        trailing: Image.asset(badgePath, width: 40, height: 40),
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      const Text(
+        'CATEGORY PROGRESS',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       ),
-    );
+      const SizedBox(height: 10),
+      if (categoryProgress.isEmpty)
+        const Center(
+          child: Text(
+            'No category progress available.',
+            style: TextStyle(fontSize: 16, color: Colors.white70),
+          ),
+        ),
+      ...categoryProgress.entries.map((entry) => _buildCategoryProgressBar(entry.key, entry.value)),
+    ],
+  );
+}
+
+
+Widget _buildCategoryProgressBar(String category, int progress) {
+  if (progress >= 10) {
+    return Container();
   }
+
+  double progressValue = progress / 10.0;
+  String progressFraction = '$progress/10';
+
+  return Card(
+    child: ListTile(
+      title: Text(category),
+      subtitle: Row(
+        children: [
+          Expanded(
+            child: LinearProgressIndicator(value: progressValue),
+          ),
+          const SizedBox(width: 10), 
+          Text(
+            progressFraction,
+            style: const TextStyle(fontSize: 12),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+  void _showImagePicker() async {
+  final email = await UserProfileLogic().getEmailFromPreferences();
+  if (email == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Email not found. Please log in again.')),
+    );
+    return;
+  }
+
+  if (!_profileImage.contains('default.png')) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Profile Picture'),
+          content: const Text('You already chose a profile picture.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); 
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+    return; 
+  }
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        title: const Text('Select Profile Picture'),
+        content: Container(
+          width: 150,
+          height: 150,
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: _profileImages.length,
+            itemBuilder: (context, index) {
+              return GestureDetector(
+                onTap: () async {
+                  setState(() {
+                    _profileImage = _profileImages[index];
+                  });
+
+                  final profilePicName = _profileImages[index].split('/').last; // Extragem doar numele fișierului
+                  final success = await UserProfileLogic().updateProfilePicture(email, profilePicName);
+
+                  if (success) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Profile picture updated successfully.')),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to update profile picture.')),
+                    );
+                  }
+
+                  Navigator.pop(context);
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundImage: AssetImage(_profileImages[index]),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+    },
+  );
+}
 }

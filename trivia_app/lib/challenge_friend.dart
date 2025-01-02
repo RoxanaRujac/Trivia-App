@@ -227,7 +227,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
 
   Future saveChallenge() async {
     final String apiUrl = 'http://localhost:3000/saveChallenge';
-    // Citește email-ul din SharedPreferences
     String? challengerEmail = await getEmailFromSharedPreferences();
     if (challengerEmail == null) {
       print('Email not found in SharedPreferences');
@@ -240,7 +239,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
       return;
     }
 
-    // Construiește corpul cererii
     final response = await http.post(
       Uri.parse(apiUrl),
       headers: {"Content-Type": "application/json"},
@@ -253,10 +251,8 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
       }),
     );
 
-    // Gestionează răspunsul
     if (response.statusCode == 201) {
       print('Challenge saved successfully');
-      // Alte acțiuni, dacă e cazul
     } else {
       print('Failed to save challenge: ${response.body}');
     }
