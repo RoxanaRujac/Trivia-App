@@ -285,44 +285,67 @@ class _GamePageState extends State<GameScreen> {
   }
 
   void showGameCompleteDialog() {
-    // Apelează metoda getCurrentUser()
     getCurrentUser().then((userEmail) {
       if (userEmail != null) {
-        gameLogic.submitScore(userEmail, correctAnswersCount).then((_) {
-          print('Score submitted successfully');
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text('Game Complete!'),
-              content: Text(
-                  'Congratulations! You completed the game with $correctAnswersCount correct answers.'),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Închide dialogul
-                    Navigator.pop(context); // Revino la ecranul anterior
-                  },
-                  child: Text('OK'),
-                ),
-              ],
-            ),
-          );
+        print(userEmail);
+        gameLogic.getScore(userEmail).then((oldScore) {
+          int newScore = oldScore + correctAnswersCount;
+
+          gameLogic.submitScore(userEmail, newScore).then((_) {
+            print('Score submitted successfully');
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Game Complete!'),
+                content: Text(
+                    'Congratulations! You completed the game with $correctAnswersCount correct answers. Your total score is $newScore.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          }).catchError((error) {
+            print('Error submitting score: $error');
+            showDialog(
+              context: context,
+              barrierDismissible: false,
+              builder: (context) => AlertDialog(
+                title: Text('Game Complete!'),
+                content: Text(
+                    'Congratulations! You completed the game with $correctAnswersCount correct answers. However, there was an error saving your score.'),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: Text('OK'),
+                  ),
+                ],
+              ),
+            );
+          });
         }).catchError((error) {
-          // Afișează o eroare dacă trimiterea scorului eșuează
-          print('Error submitting score: $error');
+          print('Error fetching old score: $error');
           showDialog(
             context: context,
             barrierDismissible: false,
             builder: (context) => AlertDialog(
               title: Text('Game Complete!'),
               content: Text(
-                  'Congratulations! You completed the game with $correctAnswersCount correct answers. However, there was an error saving your score.'),
+                  'Congratulations! You completed the game with $correctAnswersCount correct answers. However, there was an error fetching your old score.'),
               actions: [
                 TextButton(
                   onPressed: () {
-                    Navigator.pop(context); // Închide dialogul
-                    Navigator.pop(context); // Revino la ecranul anterior
+                    Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   child: Text('OK'),
                 ),
