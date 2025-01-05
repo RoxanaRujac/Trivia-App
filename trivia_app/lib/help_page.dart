@@ -5,51 +5,35 @@ class HelpPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('How to Play Trivia'),
-        elevation: 5,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context); // Navighează înapoi la pagina anterioară
-          },
-        ),
-        actions: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right: 40),
-            child: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'home') {
-                  Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
-                } else if (value == 'create_account') {
-                  Navigator.pushNamed(
-                      context, '/create_account'); // Mergi la Create Account
-                }
-              },
-              itemBuilder: (BuildContext context) {
-                return [
-                  const PopupMenuItem<String>(
-                    value: 'home',
-                    child: Text('Go to Home'),
-                  ),
-                  const PopupMenuItem<String>(
-                    value: 'create_account',
-                    child: Text('Go to Create Account'),
-                  ),
-                ];
-              },
-              icon: const Icon(Icons.menu), // Icon-ul meniului
-            ),
-          )
-        ],
-        flexibleSpace: Container(
+   return Scaffold(
+    appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFD5CDF8), Color(0xFF6A77B0)],
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+          ),
+          child: AppBar(
+            title: const Text('How to play'),
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.help),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/help');
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/user_profile');
+                },
+              ),
+            ],
           ),
         ),
       ),

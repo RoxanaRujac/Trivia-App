@@ -95,21 +95,33 @@ class CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Categories'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        flexibleSpace: Container(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFD5CDF8), Color.fromARGB(255, 146, 118, 170)],
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.help),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/help');
+                },
+              ),
+              IconButton(
+                icon: const Icon(Icons.account_circle),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/user_profile');
+                },
+              ),
+            ],
           ),
         ),
       ),
