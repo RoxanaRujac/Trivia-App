@@ -4,11 +4,12 @@ import 'package:http/http.dart' as http;
 class GameLogic {
   final int categoryId;
   final int numQuestions;
+  final int timeLimit;
 
   List<dynamic> questions = [];
   int currentQuestionIndex = 0;
 
-  GameLogic({required this.categoryId, this.numQuestions = 15});
+  GameLogic({required this.categoryId, required this.numQuestions, required this.timeLimit});
 
   List<dynamic> usedQuestions = [];
 

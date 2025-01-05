@@ -21,7 +21,7 @@ class GameScreen extends StatefulWidget {
 
 class _GamePageState extends State<GameScreen> {
   bool isLoading = true;
-  GameLogic gameLogic = GameLogic(categoryId: 0, numQuestions: 15);
+  GameLogic gameLogic = GameLogic(categoryId: 0, numQuestions: 15, timeLimit: 5);
 
   late Timer _timer;
   int remainingTime = 0; // In seconds
@@ -33,8 +33,16 @@ class _GamePageState extends State<GameScreen> {
   void initState() {
     super.initState();
     remainingTime = widget.timeLimit * 60; // Convert minutes to seconds
-    gameLogic = GameLogic(
-        categoryId: widget.categoryId, numQuestions: widget.numberOfQuestions);
+
+     print('Category ID: ${widget.categoryId}');
+      print('Number of Questions: ${widget.numberOfQuestions}');
+      print('Time Limit: ${widget.timeLimit}');
+
+     gameLogic = GameLogic(
+    categoryId: widget.categoryId, 
+    numQuestions: widget.numberOfQuestions, 
+    timeLimit: widget.timeLimit
+  );
     startTimer();
     loadQuestions();
   }

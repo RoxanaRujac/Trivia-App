@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:trivia_app/game/game_screen.dart';
 import 'user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'game_logic.dart';
+import 'game_screen.dart';
+
 
 class ChallengeFriendPage extends StatefulWidget {
   @override
@@ -78,6 +81,17 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               ListTile(
+                title: Text('3 Minutes'),
+                onTap: () {
+                  setState(() {
+                    timeLimit = 3;
+                  });
+                  saveSettings();
+                  checkIfReady();
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
                 title: Text('5 Minutes'),
                 onTap: () {
                   setState(() {
@@ -89,21 +103,10 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                 },
               ),
               ListTile(
-                title: Text('10 Minutes'),
+                title: Text('7 Minutes'),
                 onTap: () {
                   setState(() {
-                    timeLimit = 10;
-                  });
-                  saveSettings();
-                  checkIfReady();
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('15 Minutes'),
-                onTap: () {
-                  setState(() {
-                    timeLimit = 15;
+                    timeLimit = 7;
                   });
                   saveSettings();
                   checkIfReady();
@@ -117,55 +120,173 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     );
   }
 
-  //choose category
-  void chooseCategory(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Choose Category'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                title: Text('Space'),
-                onTap: () {
-                  setState(() {
-                    category = 'space';
-                  });
-                  saveSettings();
-                  checkIfReady();
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('History'),
-                onTap: () {
-                  setState(() {
-                    category = 'history';
-                  });
-                  saveSettings();
-                  checkIfReady();
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Geography'),
-                onTap: () {
-                  setState(() {
-                    category = 'geography';
-                  });
-                  saveSettings();
-                  checkIfReady();
-                  Navigator.pop(context);
-                },
-              ),
-            ],
+//choose category
+void chooseCategory(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Choose Category'),
+        content: Container(
+          // Make sure the height is enough for scrolling
+          height: 300, // Adjust the height if necessary
+          child: SingleChildScrollView( // Ensure scrollability
+            child: Column(
+              children: <Widget>[
+                ListTile(
+                  title: Text('Space'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Space';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('General Knowledge'),
+                  onTap: () {
+                    setState(() {
+                      category = 'General Knowledge';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Sports'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Sports';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('History'),
+                  onTap: () {
+                    setState(() {
+                      category = 'History';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Movies & TV Shows'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Movies & TV Shows';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Music'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Music';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Technology'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Technology';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Art & Literature'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Art & Literature';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Mythology'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Mythology';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Famous Personalities'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Famous Personalities';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Travel Destinations'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Travel Destinations';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Psychology'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Psychology';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  title: Text('Hobbies'),
+                  onTap: () {
+                    setState(() {
+                      category = 'Hobbies';
+                    });
+                    saveSettings();
+                    checkIfReady();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
+}
+
+
+
 
   //check if all options all selected
   void checkIfReady() {
@@ -198,14 +319,21 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
       timeLimit = prefs.getInt('timeLimit');
       category = prefs.getString('category');
     });
+    print('Loaded settings: numberOfQuestions=$numberOfQuestions, timeLimit=$timeLimit, category=$category');
+
   }
 
-  Future<void> saveSettings() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('numberOfQuestions', numberOfQuestions ?? 10);
-    await prefs.setInt('timeLimit', timeLimit ?? 5);
-    await prefs.setString('category', category ?? 'random');
-  }
+
+ Future<void> saveSettings() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setInt('numberOfQuestions', numberOfQuestions ?? 10);
+  await prefs.setInt('timeLimit', timeLimit ?? 3);
+  await prefs.setString('category', category ?? 'general_knowledge');
+  print('Saved settings: numberOfQuestions=$numberOfQuestions, timeLimit=$timeLimit, category=$category');
+
+}
+
+  
 
   Future<String?> getCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -306,26 +434,37 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
             isReadyForChallenge
                 ? ElevatedButton(
                     onPressed: () {
-                      Map<String, int> categoryMap = {
-                        'space': 1,
-                        'history': 2,
-                        'geography': 3,
-                      };
+                     Map<String, int> categoryMap = {
+                      'Space': 1,
+                      'General Knowledge': 2,
+                      'Sports': 3,
+                      'History': 5, // ID 4 is missing
+                      'Movies & TV Shows': 6,
+                      'Music': 7,
+                      'Technology': 8,
+                      'Art & Literature': 9,
+                      'Mythology': 10,
+                      'Famous Personalities': 11,
+                      'Travel Destinations': 12,
+                      'Psychology': 13,
+                      'Hobbies': 14,
+                    };
 
-                      // category id
-                      int categoryId = categoryMap[category] ?? 1;
+                  final categoryId = categoryMap[category] ?? 1;
 
-                      //game page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameScreen(
-                            categoryId: categoryId,
-                            numberOfQuestions: numberOfQuestions ?? 10,
-                            timeLimit: timeLimit ?? 5,
-                          ),
+                  loadSettings();
+
+                   Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(
+                        categoryId: categoryId,
+                        numberOfQuestions: numberOfQuestions ?? 10,
+                        timeLimit: timeLimit ?? 3,
                         ),
-                      );
+                      ),
+                    );
+
                       setState(() {
                         selectedUser = null;
                         numberOfQuestions = null;
