@@ -45,7 +45,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     'History': 'assets/images/history_badge.png',
     'Mythology': 'assets/images/mythology_badge.png',
   };
-  
+
   @override
   void initState() {
     super.initState();
@@ -71,27 +71,29 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
- Future<void> _fetchUsername(String email) async {
-  try {
-    final response = await http.post(
-      Uri.parse('http://localhost:3000/getUsername'), // Asigură-te că endpoint-ul este corect
-      headers: {'Content-Type': 'application/json'},
-      body: json.encode({'email': email}),
-    );
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      setState(() {
-        username = data['username'] ?? 'Unknown'; // Verificare fallback
-      });
-    } else {
-      print('Failed to fetch username: ${response.body}');
+  Future<void> _fetchUsername(String email) async {
+    try {
+      final response = await http.post(
+        Uri.parse(
+            'http://localhost:3000/getUsername'), // Asigură-te că endpoint-ul este corect
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'email': email}),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          username = data['username'] ?? 'Unknown'; // Verificare fallback
+        });
+      } else {
+        print('Failed to fetch username: ${response.body}');
+      }
+    } catch (e) {
+      print('Error fetching username: $e');
     }
-  } catch (e) {
-    print('Error fetching username: $e');
   }
-}
- 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,7 +175,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 const SizedBox(height: 20),
                 // User name
                 Text(
-                  username,  // Afișează numele utilizatorului
+
+                  username, // Afișează numele utilizatorului
                   style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
@@ -190,7 +193,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 const SizedBox(height: 8),
                 // User email
                 Text(
-                  email,  // Afișează email-ul citit din fișier
+                  email, // Afișează email-ul citit din fișier
                   style: const TextStyle(
                     fontSize: 20,
                     color: Colors.white70,
@@ -212,7 +215,9 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                     _logout(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
@@ -236,8 +241,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildNotificationCard(context, 'RandomPlayer challenged you for a quiz!'),
-                _buildNotificationCard(context, 'Friend123 challenged you for a quiz!'),
+                _buildNotificationCard(
+                    context, 'RandomPlayer challenged you for a quiz!'),
+                _buildNotificationCard(
+                    context, 'Friend123 challenged you for a quiz!'),
                 const SizedBox(height: 40),
                 // Achievements Section
                 const Text(
@@ -272,7 +279,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 const SizedBox(height: 20),
                 ...categoryProgress.entries
                     .where((entry) => entry.value > 0 && entry.value < 10)
-                    .map((entry) => _buildCategoryProgressBar(entry.key, entry.value)),
+                    .map((entry) =>
+                        _buildCategoryProgressBar(entry.key, entry.value)),
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _showBadgeCollection,
@@ -294,7 +302,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         // Verificăm dacă textul conține "challenged you" pentru a declanșa acțiunea
         if (notificationText.contains("challenged you")) {
           // Navighează către ecranul de joc
-          Navigator.pushNamed(context, '/game_screen');  // Definim '/game_screen' în routings
+          Navigator.pushNamed(
+              context, '/game_screen'); // Definim '/game_screen' în routings
         }
       },
       child: Container(
@@ -326,7 +335,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   }
 
   // Widget pentru un card de realizare
-  Widget _buildAchievementCard(String title, String description, String imagePath) {
+  Widget _buildAchievementCard(
+      String title, String description, String imagePath) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5.0),
       padding: const EdgeInsets.all(16.0),
@@ -369,45 +379,46 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     // Log out logic (de exemplu, navigare către login screen)
     Navigator.pushReplacementNamed(context, '/login');
   }
-  // Widget pentru progres pe categorii
- Widget _buildCategoryProgressBar(String category, int progress) {
-  return Container(
-    margin: const EdgeInsets.symmetric(vertical: 10),
-    padding: const EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      color: Colors.white.withOpacity(0.2),
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: const Color(0xFF6A77B0), width: 2),
-    ),
-    child: Row(
-      children: [
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                category,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 5),
-              LinearProgressIndicator(
-                value: progress / 10,
-                backgroundColor: Colors.grey.shade300,
-                color: const Color(0xFF6A77B0),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(width: 10),
-        Image.asset('assets/images/unknown_badge.png', width: 40, height: 40),
-      ],
-    ),
-  );
-}
 
+
+  // Widget pentru progres pe categorii
+  Widget _buildCategoryProgressBar(String category, int progress) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFF6A77B0), width: 2),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  category,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                LinearProgressIndicator(
+                  value: progress / 10,
+                  backgroundColor: Colors.grey.shade300,
+                  color: const Color(0xFF6A77B0),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Image.asset('assets/images/unknown_badge.png', width: 40, height: 40),
+        ],
+      ),
+    );
+  }
 
   // Pop-up pentru colecția de badge-uri
   void _showBadgeCollection() {

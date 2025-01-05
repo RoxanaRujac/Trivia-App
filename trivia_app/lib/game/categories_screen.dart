@@ -12,10 +12,10 @@ class CategoriesScreenState extends State<CategoriesScreen> {
   String _selectedCategory = "General Knowledge";
 
   List<String> categoryImages = [
+    'assets/images/space.jpg',
     'assets/images/general_knowledge.jpg',
     'assets/images/sports.jpg',
     'assets/images/history.jpg',
-    'assets/images/utcn.jpg',
     'assets/images/movies.jpg',
     'assets/images/music.jpg',
     'assets/images/technology.jpg',
@@ -25,14 +25,29 @@ class CategoriesScreenState extends State<CategoriesScreen> {
     'assets/images/travel.jpg',
     'assets/images/psychology.png',
     'assets/images/hobbies.jpg',
-    'assets/images/space.jpg',
   ];
 
+  Map<String, int> categoryIds = {
+    "Space": 1,
+    "General Knowledge": 2,
+    "Sports": 3,
+    "History": 5, // ID 4 lipsește
+    "Movies & TV Shows": 6,
+    "Music": 7,
+    "Technology": 8,
+    "Art & Literature": 9,
+    "Mythology": 10,
+    "Famous Personalities": 11,
+    "Travel Destinations": 12,
+    "Psychology": 13,
+    "Hobbies": 14,
+  };
+
   List<String> categories = [
+    "Space",
     "General Knowledge",
     "Sports",
     "History",
-    "UTCN is a lifestyle",
     "Movies & TV Shows",
     "Music",
     "Technology",
@@ -42,7 +57,6 @@ class CategoriesScreenState extends State<CategoriesScreen> {
     "Travel Destinations",
     "Psychology",
     "Hobbies",
-    "Space",
   ];
 
   Widget _buildCategoryCard(String category, int i) {
@@ -124,23 +138,28 @@ class CategoriesScreenState extends State<CategoriesScreen> {
                 widthFactor: 0.42,
                 child: ElevatedButton(
                   onPressed: () {
+
+                    final selectedCategoryId =
+                        categoryIds[_selectedCategory] ?? 2;
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("Selected category: $_selectedCategory"), 
+                        content: Text("Selected category: $_selectedCategory"),
                       ),
                     );
 
-                      //game page
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GameScreen(
-                            categoryId: 1,
-                            numberOfQuestions: 15,
-                            timeLimit: 5,
-                          ),
+                    //game page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(
+                          categoryId: selectedCategoryId,
+                          numberOfQuestions: 15,
+                          timeLimit: 5,
                         ),
-                      );
+                      ),
+                    );
+
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
@@ -165,4 +184,6 @@ class CategoriesScreenState extends State<CategoriesScreen> {
       ),
     );
   }
+
 }
+

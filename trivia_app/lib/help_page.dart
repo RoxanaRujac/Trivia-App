@@ -23,7 +23,8 @@ class HelpPage extends StatelessWidget {
                 if (value == 'home') {
                   Navigator.pushNamed(context, '/'); // Mergi la HomeScreen
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(context, '/create_account'); // Mergi la Create Account
+                  Navigator.pushNamed(
+                      context, '/create_account'); // Mergi la Create Account
                 }
               },
               itemBuilder: (BuildContext context) {
@@ -53,7 +54,7 @@ class HelpPage extends StatelessWidget {
         ),
       ),
       body: Container(
-        width: double.infinity, 
+        width: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             image: const AssetImage('assets/images/trivia_background.jpg'),
@@ -120,7 +121,8 @@ class HelpPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStepCard(String title, String description, IconData icon, Color color) {
+  Widget _buildStepCard(
+      String title, String description, IconData icon, Color color) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 8.0),
       padding: const EdgeInsets.all(16.0),

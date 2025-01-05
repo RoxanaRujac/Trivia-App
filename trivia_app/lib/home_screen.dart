@@ -9,7 +9,7 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           '🏠 Welcome to Trivia',
-          style: TextStyle(fontSize: 20), 
+          style: TextStyle(fontSize: 20),
         ),
         backgroundColor: const Color.fromARGB(255, 146, 118, 170),
         elevation: 5, // Umbra AppBar-ului
@@ -78,14 +78,16 @@ class HomeScreen extends StatelessWidget {
                     Navigator.pushNamed(context, '/login');
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     backgroundColor: const Color(0xFF6A77B0),
                     foregroundColor: Colors.white,
-                    textStyle:
-                        const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+
+                    textStyle: const TextStyle(
+                        fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   child: Text('LogIn'),
                 ),
@@ -102,14 +104,15 @@ class HomeScreen extends StatelessWidget {
                     Navigator.pushNamed(context, '/create_account');
                   },
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 30),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16, horizontal: 30),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),
                     ),
                     backgroundColor: const Color(0xFFE5A7EA),
                     foregroundColor: Colors.white,
-                    textStyle:
-                        const TextStyle(fontSize: 19, fontWeight: FontWeight.bold),
+                    textStyle: const TextStyle(
+                        fontSize: 19, fontWeight: FontWeight.bold),
                   ),
                   child: Text('Create an Account'),
                 ),

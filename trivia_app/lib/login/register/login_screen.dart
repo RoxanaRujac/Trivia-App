@@ -15,15 +15,15 @@ class LoginScreen extends StatelessWidget {
     );
 
 
-     Future<void> saveEmailToSharedPreferences(String email) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_email', email); // Salvează email-ul
-      print('Email saved to SharedPreferences: $email');
-    } catch (e) {
-      print('Error saving email: $e');
+    Future<void> saveEmailToSharedPreferences(String email) async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('user_email', email); // Salvează email-ul
+        print('Email saved to SharedPreferences: $email');
+      } catch (e) {
+        print('Error saving email: $e');
+      }
     }
-  }
 
     if (success) {
       saveEmailToSharedPreferences(emailController.text);
@@ -31,7 +31,7 @@ class LoginScreen extends StatelessWidget {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Account creation failed. Please try again.'),
+          content: Text('The email does not exist. Please try again.'),
         ),
       );
     }
