@@ -288,7 +288,7 @@ class _GamePageState extends State<GameScreen> {
     getCurrentUser().then((userEmail) {
       if (userEmail != null) {
         print(userEmail);
-        gameLogic.getScore(userEmail).then((oldScore) {
+        gameLogic.getScore(userEmail, gameLogic.categoryId).then((oldScore) {
           int newScore = oldScore + correctAnswersCount;
 
           gameLogic.submitScore(userEmail, newScore).then((_) {

@@ -53,13 +53,13 @@ class GameLogic {
     return currentQuestionIndex == numQuestions - 1;
   }
 
-  Future<int> getScore(String email) async {
+  Future<int> getScore(String email, int categoryId) async {
     final url = Uri.parse('http://localhost:3000/select_userscore');
     try {
       final response = await http.post(
         url,
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email}),
+        body: jsonEncode({'email': email, 'categoryId': categoryId}),
       );
 
       if (response.statusCode == 200) {

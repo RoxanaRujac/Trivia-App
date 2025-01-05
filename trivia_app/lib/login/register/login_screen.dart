@@ -30,7 +30,7 @@ class LoginScreen extends StatelessWidget {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Account creation failed. Please try again.'),
+          content: Text('The email does not exist. Please try again.'),
         ),
       );
     }
