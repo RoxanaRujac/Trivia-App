@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:trivia_app/game/game_screen.dart';
 import 'user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'game_logic.dart';
-import 'game_screen.dart';
 
 
 class ChallengeFriendPage extends StatefulWidget {
