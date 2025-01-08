@@ -328,7 +328,7 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
             children: [
               Text('Category: $categoryName'),
               Text('Number of Questions: $numberOfQuestions'),
-              Text('Time Limit: $timeLimit seconds'),
+              Text('Time Limit: $timeLimit minutes'),
             ],
           ),
           actions: [

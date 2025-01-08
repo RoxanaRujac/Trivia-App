@@ -289,7 +289,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
 
 
 
-
   //check if all options all selected
   void checkIfReady() {
     if (selectedUser != null &&
@@ -335,7 +334,14 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
 
 }
 
-  
+  Future<void> resetSettings() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.remove('numberOfQuestions');
+  await prefs.remove('timeLimit');
+  await prefs.remove('category');
+  print('Settings have been reset');
+}
+
 
   Future<String?> getCurrentUser() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -367,7 +373,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
       return;
     }
 
-    // Verifică dacă toate câmpurile sunt complete
     if (selectedUser == null || numberOfQuestions == null || timeLimit == null || category == null) {
       print('All fields are required before saving the challenge');
       return;
@@ -507,6 +512,8 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                     );
 
                       await saveChallenge();
+                      await resetSettings(); // Reset settings after saving the challenge
+                      
                       setState(() {
                         selectedUser = null;
                         numberOfQuestions = null;
