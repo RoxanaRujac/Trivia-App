@@ -11,7 +11,6 @@ class HomeScreen extends StatelessWidget {
           '🏠 Welcome to Trivia',
           style: TextStyle(fontSize: 20),
         ),
-        backgroundColor: const Color.fromARGB(255, 146, 118, 170),
         elevation: 5, // Umbra AppBar-ului
         actions: <Widget>[
           IconButton(
@@ -19,21 +18,13 @@ class HomeScreen extends StatelessWidget {
             onPressed: () {
               Navigator.pushNamed(
                   context, '/help'); // Navighează la pagina de ajutor
-            },
-          ),
-          const Padding(
-            padding: EdgeInsets.only(right: 8.0),
-            child: CircleAvatar(
-              backgroundColor: Color(0xFF6A77B0),
-              child: Icon(Icons.account_circle,
-                  size: 30, color: Colors.white), // Culoare fundal avatar
-            ),
+            },   
           ),
         ],
         flexibleSpace: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xFFD5CDF8), Color.fromARGB(255, 146, 118, 170)],
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),

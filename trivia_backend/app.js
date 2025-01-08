@@ -609,33 +609,6 @@ app.post('/acceptChallenge', (req, res) => {
 });
 
 
-
-
-
-//------------------------------------------ Update progress --------------------------------------
-
-app.post('/update_quiz_progress', (req, res) => {
-  const { user_email, category_id } = req.body;
-
-  const query = `
-    INSERT INTO user_quiz_progress (user_email, category_id, completed_quizzes)
-    VALUES (?, ?, 1)
-    ON DUPLICATE KEY UPDATE completed_quizzes = completed_quizzes + 1
-  `;
-
-  db.query(query, [user_email, category_id], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send('Error updating quiz progress');
-    }
-    res.send('Quiz progress updated successfully');
-  });
-});
-
-
-
-
-
 //---------------------------------- Get progress ----------------------------------------
 
 app.post('/getCategoryProgress', (req, res) => {
@@ -657,8 +630,6 @@ app.post('/getCategoryProgress', (req, res) => {
     res.json(results);
   });
 });
-
-
 
 
 //--------------------------------- Update profile picture -------------------------------------

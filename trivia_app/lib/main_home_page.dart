@@ -61,6 +61,7 @@ class HomePage extends StatelessWidget {
             title: const Text('Welcome Back!'),
             backgroundColor: Colors.transparent,
             elevation: 0,
+            automaticallyImplyLeading: false,
             actions: [
               IconButton(
                 icon: const Icon(Icons.help),
