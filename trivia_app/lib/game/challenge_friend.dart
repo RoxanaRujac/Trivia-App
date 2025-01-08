@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:trivia_app/game/game_screen.dart';
 import 'user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 
 class ChallengeFriendPage extends StatefulWidget {
@@ -20,7 +21,6 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
   String? category;
   bool isReadyForChallenge = false;
   
-  get http => null;
 
   //choose the number of questions
   void chooseNumberOfQuestions(BuildContext context) {
@@ -505,7 +505,7 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
                         ),
                       ),
                     );
-                    
+
                       await saveChallenge();
                       setState(() {
                         selectedUser = null;
