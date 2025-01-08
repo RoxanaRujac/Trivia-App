@@ -232,7 +232,7 @@ app.get("/questions", (req, res) => {
 
 app.post("/check_achievements", (req, res) => {
   const queryUserProgress = `
-    SELECT user_email, SUM(completed_quizez) AS total_completed, SUM(score) AS total_score
+    SELECT user_email, SUM(completed_quizzes) AS total_completed, SUM(score) AS total_score
     FROM user_quiz_progress
     GROUP BY user_email;
   `;
@@ -670,7 +670,7 @@ app.post('/updateProfilePicture', (req, res) => {
     return res.status(400).json({ message: 'Email and profile picture are required.' });
   }
 
-  const query = 'UPDATE user SET profile_pic = ? WHERE email = ? AND profile_pic="default.png"';
+  const query = 'UPDATE user SET profile_pic = ? WHERE email = ? AND profile_pic=null';
   db.query(query, [profile_pic, email], (err, result) => {
     if (err) {
       console.error('Error updating profile picture:', err);

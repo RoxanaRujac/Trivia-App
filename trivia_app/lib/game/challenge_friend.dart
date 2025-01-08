@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:trivia_app/game/game_screen.dart';
 import 'user_service.dart';
@@ -17,6 +19,8 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
   int? timeLimit;
   String? category;
   bool isReadyForChallenge = false;
+  
+  get http => null;
 
   //choose the number of questions
   void chooseNumberOfQuestions(BuildContext context) {
@@ -118,8 +122,8 @@ class _ChallengeFriendPageState extends State<ChallengeFriendPage> {
     );
   }
 
-//choose category
-void chooseCategory(BuildContext context) {
+  //choose category
+  void chooseCategory(BuildContext context) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -350,6 +354,44 @@ void chooseCategory(BuildContext context) {
     }
   }
 
+  Future<String?> getEmailFromSharedPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('user_email');
+}
+
+  Future saveChallenge() async {
+    final String apiUrl = 'http://localhost:3000/saveChallenge';
+    String? challengerEmail = await getEmailFromSharedPreferences();
+    if (challengerEmail == null) {
+      print('Email not found in SharedPreferences');
+      return;
+    }
+
+    // Verifică dacă toate câmpurile sunt complete
+    if (selectedUser == null || numberOfQuestions == null || timeLimit == null || category == null) {
+      print('All fields are required before saving the challenge');
+      return;
+    }
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({
+        "challenger_email": challengerEmail,
+        "challenged_username": selectedUser,
+        "number_of_questions": numberOfQuestions,
+        "time_limit": timeLimit,
+        "category": category,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      print('Challenge saved successfully');
+    } else {
+      print('Failed to save challenge: ${response.body}');
+    }
+}
+
 
 
   @override
@@ -431,7 +473,8 @@ void chooseCategory(BuildContext context) {
             //if all options all selected => start button, else => still the 3 buttons
             isReadyForChallenge
                 ? ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async{
+
                      Map<String, int> categoryMap = {
                       'Space': 1,
                       'General Knowledge': 2,
@@ -462,7 +505,8 @@ void chooseCategory(BuildContext context) {
                         ),
                       ),
                     );
-
+                    
+                      await saveChallenge();
                       setState(() {
                         selectedUser = null;
                         numberOfQuestions = null;
