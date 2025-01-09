@@ -579,11 +579,6 @@ app.post('/getNotifications', (req, res) => {
   });
 });
 
-
-
-
-
-
 // ------------------------------------- Accept challenge -----------------------------------
 
 app.post('/acceptChallenge', (req, res) => {
@@ -673,10 +668,6 @@ app.post('/updateProfilePicture', (req, res) => {
     }
   });
 });
-
-
-
-
 
 //------------------------------------ Get profile picture ---------------------------------
 
