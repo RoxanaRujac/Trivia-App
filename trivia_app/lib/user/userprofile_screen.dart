@@ -16,6 +16,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   String email = '';
   String username = '';
+  int highscore = 0;
   List<Map<String, dynamic>> notifications= [];
   List<Map<String, dynamic>> achievements = [];
   late Map<String, int> categoryProgress = {};
@@ -47,6 +48,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
       final fetchedUsername = await _logic.fetchUsername(email);
       setState(() {
         username = fetchedUsername;
+      });
+
+      final fetchedHighscore = await _logic.fetchHighscore(email);
+      setState(() {
+        highscore = fetchedHighscore;
       });
 
       final fetchedNotifications = await _logic.fetchNotifications(username);
@@ -123,15 +129,18 @@ void _showBadgeCollection() {
                       badgePath,
                       width: 60,
                       height: 60,
-                      fit: BoxFit.cover, // Asigură-te că imaginea se potrivește
+                      fit: BoxFit.cover, 
                     ),
                   ),
-                  const SizedBox(height: 5),
+                  const SizedBox(height: 3),
                   Text(
                     category,
                     style: const TextStyle(fontSize: 12),
                     textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis, 
+                    maxLines: 1, 
                   ),
+
                 ],
               );
             },
@@ -215,6 +224,11 @@ void _showBadgeCollection() {
         email,
         style: const TextStyle(fontSize: 20, color: Colors.white70),
       ),
+      Text(
+        "Highscore: $highscore",  // Aici highscore va fi un int și va fi afișat corect
+        style: const TextStyle(fontSize: 16, color: Colors.white70),
+      ),
+
       const SizedBox(height: 20),
       ElevatedButton(
         onPressed: _showImagePicker,  // Apelează funcția pentru selectarea imaginii
@@ -328,7 +342,7 @@ Widget _buildNotificationCard(Map<String, dynamic> notification) {
             children: [
               Text('Category: $categoryName'),
               Text('Number of Questions: $numberOfQuestions'),
-              Text('Time Limit: $timeLimit seconds'),
+              Text('Time Limit: $timeLimit minutes'),
             ],
           ),
           actions: [

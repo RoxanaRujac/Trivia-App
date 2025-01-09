@@ -71,7 +71,6 @@ LOCK TABLES `categories` WRITE;
 INSERT INTO `categories` VALUES (1,'space','planets, starts and other cool stuff');
 /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
 UNLOCK TABLES;
-
 --
 -- Table structure for table `questions`
 --
@@ -113,7 +112,7 @@ CREATE TABLE `user` (
   `email` varchar(255) DEFAULT NULL unique,
   `password` varchar(255) DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
-  `profile_pic` tinyint DEFAULT NULL,
+  `profile_pic` varchar(255) DEFAULT 'default.png',
   `achievements` text,
   `badges` text,
   PRIMARY KEY (`user_id`),
@@ -151,7 +150,6 @@ INSERT INTO `categories` VALUES
 (2, 'General Knowledge', 'Various topics and general trivia'),
 (3, 'Sports', 'All about games, players, and sports history'),
 (4, 'History', 'Events, milestones, and historical figures'),
-(5, 'UTCN is a lifestyle', 'Everything related to UTCN culture and experiences'),
 (6, 'Movies & TV Shows', 'Films, series, and the entertainment industry'),
 (7, 'Music', 'Genres, artists, and musical instruments'),
 (8, 'Technology', 'Gadgets, software, and advancements in tech'),
@@ -1991,12 +1989,7 @@ CREATE TABLE `user_achievements` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 INSERT INTO achievements (name, description) VALUES 
-('Rookie Scorer', 'Reach 1000 highscore'), ('Master Scorer', 'Reach 2500 highscore'), ('Legendary Scorer', 'Reach 5000 highscore'), ('First Quiz Conqueror', 'Complete 1 quiz'), ('Quiz Enthusiast', 'Complete 5 quizzes'), ('Quiz Master', 'Complete 10 quizzes'), ('Quiz Marathoner', 'Complete 50 quizzes'), ('Challenge Initiator', 'You won 1 challenge'), ('Challenge Hero', 'You won 5 challenges'), ('Challenge Champion', 'You won 10 challenges'), ('Welcome Aboard!', 'User logged in for the first time');
-
-SET FOREIGN_KEY_CHECKS = 0;
-INSERT INTO user_achievements (email, achievement_id)
-VALUES ('buna@gmail.com', 1), ('buna@gmail.com', 2), ('eu@gmail.com', 3), ('eu@gmail.com', 1);
-SET FOREIGN_KEY_CHECKS = 1;
+('Rookie Scorer', 'Reach 1000 highscore'), ('Master Scorer', 'Reach 2500 highscore'), ('Legendary Scorer', 'Reach 5000 highscore'), ('First Quiz Conqueror', 'Complete 1 quiz'), ('Quiz Enthusiast', 'Complete 5 quizzes'), ('Quiz Master', 'Complete 10 quizzes'), ('Quiz Marathoner', 'Complete 50 quizzes'), ('Welcome Aboard!', 'User logged in for the first time');
 
 DROP TABLE IF EXISTS `challenges`;
 
@@ -2016,6 +2009,7 @@ CREATE TABLE `challenges` (
 
 DROP TABLE IF EXISTS `user_quiz_progress`;
 CREATE TABLE user_quiz_progress (
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_email varchar(45) NOT NULL,
     category_id INT NOT NULL,
     completed_quizzes INT DEFAULT 0,
@@ -2023,7 +2017,7 @@ CREATE TABLE user_quiz_progress (
     FOREIGN KEY (user_email) REFERENCES user(email),
     FOREIGN KEY (category_id) REFERENCES categories(category_id)
 );
-CREATE UNIQUE INDEX id ON user_quiz_progress (user_email, category_id);
+
 
 
 LOCK TABLES `answers` WRITE;

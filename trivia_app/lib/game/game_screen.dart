@@ -106,11 +106,31 @@ class _GamePageState extends State<GameScreen> {
     return prefs.getString('currentUserEmail');
   }
 
+  AppBar buildAppBar() {
+    return AppBar(
+      title: const Text('Game in progress'),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
       return Scaffold(
-        appBar: AppBar(title: Text('Game in Progress')),
+        appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+         child: buildAppBar(),
+          ),
+        ),
         body: Center(child: CircularProgressIndicator()),
       );
     }
@@ -125,9 +145,18 @@ class _GamePageState extends State<GameScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Trivia Game'),
-        backgroundColor: Color(0xFF6A77B0),
+        appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(56.0),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF6A77B0), Color(0xFFE5A7EA)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: buildAppBar(),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(

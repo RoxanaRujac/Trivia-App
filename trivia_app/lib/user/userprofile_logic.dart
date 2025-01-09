@@ -34,6 +34,29 @@ class UserProfileLogic {
     }
   }
 
+Future<int> fetchHighscore(String email) async {
+  try {
+    final response = await http.post(
+      Uri.parse('http://localhost:3000/getHighscore'),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode({'email': email}),
+    );
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      return data['highscore'] ?? 0; 
+    } else {
+      print('Failed to fetch highscore: ${response.body}');
+      return 0;
+    }
+  } catch (e) {
+    print('Error fetching highscore: $e');
+    return 0;
+  }
+}
+
+
 Future<List<Map<String, dynamic>>> fetchNotifications(String username) async {
   print('Fetching notifications for username: $username');
   try {

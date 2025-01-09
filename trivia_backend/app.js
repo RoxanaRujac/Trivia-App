@@ -35,7 +35,6 @@ db.connect((err) => {
 // ------------------------- Register a new user ----------------------
 
 app.post('/register', (req, res) => {
-
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -65,19 +64,32 @@ app.post('/register', (req, res) => {
 
       const insertQuery =
         "INSERT INTO user (username, email, password, created_at) VALUES (?, ?, ?, NOW())";
-      db.query(
-        insertQuery,
-        [username, email, hashedPassword],
-        (err, result) => {
-          if (err) {
-            console.error("Error registering user:", err);
-            return res.status(500).json({ message: "Error registering user" });
-          }
-          res.status(200).json({ message: "User registered successfully" });
+      db.query(insertQuery, [username, email, hashedPassword], (err, result) => {
+        if (err) {
+          console.error("Error registering user:", err);
+          return res.status(500).json({ message: "Error registering user" });
         }
-      );
 
-     });
+        // Automatically add the achievement with achievement_id = 11
+        const insertAchievementQuery = `
+          INSERT INTO user_achievements (email, achievement_id)
+          VALUES (?, ?)
+          ON DUPLICATE KEY UPDATE achievement_id = achievement_id;
+        `;
+        db.query(insertAchievementQuery, [email, 8], (err) => {
+          if (err) {
+            console.error("Error assigning initial achievement:", err);
+            return res
+              .status(500)
+              .json({ message: "Error assigning initial achievement" });
+          }
+
+          res
+            .status(200)
+            .json({ message: "User registered and achievement assigned successfully" });
+        });
+      });
+    });
   });
 });
 
@@ -279,11 +291,11 @@ app.post("/check_achievements", (req, res) => {
         }
 
         // Check score achievements
-        if (total_score >= 5000) {
+        if (total_score >= 50) {
           completedAchievements.push(3); // Legendary Scorer
-        } else if (total_score >= 2500) {
+        } else if (total_score >= 25) {
           completedAchievements.push(2); // Master Scorer
-        } else if (total_score >= 1000) {
+        } else if (total_score >= 10) {
           completedAchievements.push(1); // Rookie Scorer
         }
 
@@ -586,13 +598,14 @@ app.post('/acceptChallenge', (req, res) => {
     return res.status(400).json({ message: 'Missing required fields' });
   }
   const query = `
-    UPDATE challenges
-    SET status = 'accepted'
-    WHERE challenger_email = ? 
-      AND challenged_username = ? 
-      AND category = ? 
-      AND status = 'pending';
-  `;
+  UPDATE challenges
+  SET status = 'accepted'
+  WHERE challenger_email = ? 
+    AND challenged_username = ? 
+    AND category = ? 
+    AND status = 'pending'
+  LIMIT 1;  -- Asigură-te că doar un singur challenge este acceptat
+`;
 
   db.query(query, [challengerEmail, challengedUsername, category], (err, result) => {
     if (err) {
@@ -641,7 +654,12 @@ app.post('/updateProfilePicture', (req, res) => {
     return res.status(400).json({ message: 'Email and profile picture are required.' });
   }
 
-  const query = 'UPDATE user SET profile_pic = ? WHERE email = ? AND profile_pic=null';
+  const query = `
+  UPDATE user 
+  SET profile_pic = ? 
+  WHERE email = ? AND profile_pic = 'default.png';
+`;
+
   db.query(query, [profile_pic, email], (err, result) => {
     if (err) {
       console.error('Error updating profile picture:', err);
@@ -686,6 +704,30 @@ app.get('/getProfileImage', (req, res) => {
   });
 });
 
+
+//------------------------------- Fetch Highscore -----------------------
+app.post("/getHighscore", (req, res) => {
+  const { email } = req.body;
+
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const query = "SELECT MAX(score) AS highscore FROM user_quiz_progress WHERE user_email = ?";
+  db.query(query, [email], (err, results) => {
+    if (err) {
+      console.error("Error fetching highscore:", err);
+      return res.status(500).json({ message: "Error fetching highscore" });
+    }
+
+    if (results.length === 0 || results[0].highscore === null) {
+      return res.status(404).json({ message: "User not found or no highscore available" });
+    }
+
+    res.json({ highscore: results[0].highscore });
+  });
+});
 
 
 app.listen(3000, () => {
