@@ -35,7 +35,6 @@ db.connect((err) => {
 // ------------------------- Register a new user ----------------------
 
 app.post('/register', (req, res) => {
-
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -65,19 +64,32 @@ app.post('/register', (req, res) => {
 
       const insertQuery =
         "INSERT INTO user (username, email, password, created_at) VALUES (?, ?, ?, NOW())";
-      db.query(
-        insertQuery,
-        [username, email, hashedPassword],
-        (err, result) => {
-          if (err) {
-            console.error("Error registering user:", err);
-            return res.status(500).json({ message: "Error registering user" });
-          }
-          res.status(200).json({ message: "User registered successfully" });
+      db.query(insertQuery, [username, email, hashedPassword], (err, result) => {
+        if (err) {
+          console.error("Error registering user:", err);
+          return res.status(500).json({ message: "Error registering user" });
         }
-      );
 
-     });
+        // Automatically add the achievement with achievement_id = 11
+        const insertAchievementQuery = `
+          INSERT INTO user_achievements (email, achievement_id)
+          VALUES (?, ?)
+          ON DUPLICATE KEY UPDATE achievement_id = achievement_id;
+        `;
+        db.query(insertAchievementQuery, [email, 11], (err) => {
+          if (err) {
+            console.error("Error assigning initial achievement:", err);
+            return res
+              .status(500)
+              .json({ message: "Error assigning initial achievement" });
+          }
+
+          res
+            .status(200)
+            .json({ message: "User registered and achievement assigned successfully" });
+        });
+      });
+    });
   });
 });
 
@@ -279,11 +291,11 @@ app.post("/check_achievements", (req, res) => {
         }
 
         // Check score achievements
-        if (total_score >= 5000) {
+        if (total_score >= 50) {
           completedAchievements.push(3); // Legendary Scorer
-        } else if (total_score >= 2500) {
+        } else if (total_score >= 25) {
           completedAchievements.push(2); // Master Scorer
-        } else if (total_score >= 1000) {
+        } else if (total_score >= 10) {
           completedAchievements.push(1); // Rookie Scorer
         }
 
