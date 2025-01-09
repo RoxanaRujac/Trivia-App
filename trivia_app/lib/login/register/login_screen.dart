@@ -47,7 +47,6 @@ class LoginScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             Navigator.pop(context);
-            Navigator.pop(context);
           },
         ),
         actions: <Widget>[
@@ -57,9 +56,7 @@ class LoginScreen extends StatelessWidget {
               onSelected: (value) {
                 if (value == 'home') {
                   Navigator.pushNamed(context, '/');
-                  Navigator.pushNamed(context, '/');
                 } else if (value == 'create_account') {
-                  Navigator.pushNamed(context, '/create_account');
                   Navigator.pushNamed(context, '/create_account');
                 }
               },
