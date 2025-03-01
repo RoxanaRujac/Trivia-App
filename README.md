@@ -5,15 +5,20 @@ Purrfect Trivia is a trivia-based game where players can answer various types of
 This project was developed as part of the **Software Engineering 2024-2025** course.
 
 
+<img width="222" alt="Screenshot 2025-03-01 172643" src="https://github.com/user-attachments/assets/d89301d0-812b-4518-8f12-65f4b548a8da" />
+
+
+<img width="231" alt="Screenshot 2025-03-01 172653" src="https://github.com/user-attachments/assets/85ae2228-16a3-4430-bbd9-dfdf82f0597c" />
+
+
 ## Table of Contents
 1. [Introduction](#introduction)
 2. [Technical Details](#technical-details)
 3. [Use Case Diagram](#use-case-diagram)
-4. [Individual Diagrams](#individual-diagrams)
-5. [Design Patterns](#design-patterns)
-6. [Database Structure](#database-structure)
-7. [Resources](#resources)
-8. [Running the Project](#running-the-project)
+4. [Design Patterns](#design-patterns)
+5. [Database Structure](#database-structure)
+6. [Resources](#resources)
+7. [Running the Project](#running-the-project)
 
 ## Introduction
 Purrfect Trivia is a simple trivia game where players can:
@@ -31,6 +36,13 @@ Purrfect Trivia is a simple trivia game where players can:
 - **Challenge Mode** for playing against other users
 - **Leaderboard** to view top scores
 - **Profile Page** for displaying achievements and badges
+
+<img width="226" alt="Screenshot 2025-03-01 172702" src="https://github.com/user-attachments/assets/dd6f6f0e-8979-4309-9378-71837814c782" />
+
+
+<img width="235" alt="Screenshot 2025-03-01 172711" src="https://github.com/user-attachments/assets/8ad98c22-693a-4bff-a5e6-a8f33add98dd" />
+
+
 
 ## Technical Details
 ### Frontend:
@@ -55,27 +67,12 @@ Initially, the use case diagram was designed as shown below. As the project evol
 
 [**Use Case Diagram**](https://drive.google.com/file/d/1TjiDkUFffaXFgd8_P0CkHt6ripzZZJlZ/view?usp=sharing)
 
-## Individual Diagrams
-### Roxana:
-- Use Case Diagram for the **Challenge Friend** functionality
-- Communication Diagram for the **Game** functionality
-
-### Tania:
-- Communication Diagram for the **Categories** functionality
-- Activity Diagram for the **Login** functionality
-
-### Ema:
-- State Diagram for obtaining **Badges**
-- Communication Diagram for displaying the **Score**
-
 ## Design Patterns
-### Roxana:
+
 - **Builder Pattern** was implemented for the **home_page** class to simplify the creation of similar elements (like buttons) on the page. A `ButtonBuilder` class was created to generate specific types of buttons used in the app.
 
-### Tania:
 - **State Management Pattern** was used for the **LeaderboardScreen** class (a StatefulWidget). The internal state is dynamically updated using **setState**, ensuring UI updates whenever the leaderboard data changes.
 
-### Ema:
 - **Observer Pattern** was used for managing notifications between classes. A **Subject** (challenge sender) emits notifications, and **Observers** (users receiving challenges) react accordingly.
 
 ## Database Structure
