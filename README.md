@@ -4,12 +4,10 @@ Purrfect Trivia is a trivia-based game where players can answer various types of
 
 This project was developed as part of the **Software Engineering 2024-2025** course.
 
-
-<img width="222" alt="Screenshot 2025-03-01 172643" src="https://github.com/user-attachments/assets/d89301d0-812b-4518-8f12-65f4b548a8da" />
-
-
-<img width="231" alt="Screenshot 2025-03-01 172653" src="https://github.com/user-attachments/assets/85ae2228-16a3-4430-bbd9-dfdf82f0597c" />
-
+<div style="display: flex; justify-content: space-between;">
+<img width="322" alt="Screenshot 2025-03-01 172643" src="https://github.com/user-attachments/assets/d89301d0-812b-4518-8f12-65f4b548a8da" style="margin-right: 10px;"/>
+<img width="331" alt="Screenshot 2025-03-01 172653" src="https://github.com/user-attachments/assets/85ae2228-16a3-4430-bbd9-dfdf82f0597c" />
+</div>
 
 ## Table of Contents
 1. [Introduction](#introduction)
@@ -37,11 +35,10 @@ Purrfect Trivia is a simple trivia game where players can:
 - **Leaderboard** to view top scores
 - **Profile Page** for displaying achievements and badges
 
-<img width="226" alt="Screenshot 2025-03-01 172702" src="https://github.com/user-attachments/assets/dd6f6f0e-8979-4309-9378-71837814c782" />
-
-
-<img width="235" alt="Screenshot 2025-03-01 172711" src="https://github.com/user-attachments/assets/8ad98c22-693a-4bff-a5e6-a8f33add98dd" />
-
+<div style="display: flex; justify-content: space-between;">
+<img width="326" alt="Screenshot 2025-03-01 172702" src="https://github.com/user-attachments/assets/dd6f6f0e-8979-4309-9378-71837814c782" style="margin-right: 20px;"/>
+<img width="345" alt="Screenshot 2025-03-01 172711" src="https://github.com/user-attachments/assets/8ad98c22-693a-4bff-a5e6-a8f33add98dd" />
+</div>
 
 
 ## Technical Details
@@ -87,7 +84,9 @@ The database contains the following tables:
 - `challenges`: stores challenges sent between users
 
 **Database Diagram**:
-![Database Diagram](link-to-your-database-diagram)
+
+<img width="500" alt="{6139B0E8-7ECC-4E8B-B8EE-05032765998C}" src="https://github.com/user-attachments/assets/255223c2-34fc-45f4-b896-63437b8d6879" />
+
 
 ## Resources
 You can view the project on **GitHub**:  
